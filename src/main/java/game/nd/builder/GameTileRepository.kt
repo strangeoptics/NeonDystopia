@@ -3,13 +3,21 @@ package game.nd.builder
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.data.CharacterTile
+import org.hexworks.zircon.api.graphics.Symbols
 
 object GameTileRepository {
 
+    val EMPTY: CharacterTile = Tiles.empty()
 
     private val DEFAULT = Tiles.newBuilder()
             .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
             .buildCharacterTile()
+
+    val FLOOR = Tiles.newBuilder()
+            .withCharacter(Symbols.INTERPUNCT)
+            .withForegroundColor(ANSITileColor.YELLOW)
+            .buildCharacterTile()
+
 
     val UNREVEALED = DEFAULT
             .withCharacter(' ')
@@ -22,6 +30,7 @@ object GameTileRepository {
     val PLAYER = DEFAULT
             .withCharacter('@')
             .withForegroundColor(GameColors.ACCENT_COLOR)
+            .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
 
     val FUNGUS = DEFAULT
             .withCharacter('f')

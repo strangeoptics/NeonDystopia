@@ -8,12 +8,20 @@ import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.component.ComponentAlignment
 import org.hexworks.zircon.api.component.TextArea
+import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.game.GameArea
 import org.hexworks.zircon.api.graphics.Symbols
 import org.hexworks.zircon.api.grid.TileGrid
+import org.hexworks.zircon.api.input.InputType
+import org.hexworks.zircon.api.kotlin.onKeyStroke
+import org.hexworks.zircon.api.resource.REXPaintResource
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.InputStream
 
 class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
 
@@ -62,11 +70,12 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
 
 
         val gameArea = WorldImpl(VISIBLE_SIZE, ACTUAL_SIZE)
-        makeCaves(gameArea)
-        var block = gameArea.fetchBlockAt(Position3D.create(5,5,0))
-        block.get().defaultTile = GameTileRepository.PLAYER
-        block.get().layers.add(GameTileRepository.PLAYER)
+        //makeCaves(gameArea)
+        loadRexGameArea(gameArea)
+        var block = gameArea.fetchBlockAt(gameArea.player.position)
+        block.get().addEntity(gameArea.player)
 
+        gameArea.fetchBlockAt(Position3D.create(30,40,0)).get().addEntity(gameArea.enemy0)
 
 
         screen.addComponent(statsPanel)
@@ -76,6 +85,76 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
                 .withGameArea(gameArea).withPosition(sidebarWidth, 0)
                 .build())
 
+        screen.onKeyStroke {
+
+            gameArea.playerInputSystem.setKeyInput(it)
+            /*if(it.isCtrlDown()) {
+                when (it.inputType()) {
+                    InputType.ArrowRight -> gameArea.scrollOneRight()
+                    InputType.ArrowLeft -> gameArea.scrollOneLeft()
+                    InputType.ArrowUp -> gameArea.scrollOneBackward()
+                    InputType.ArrowDown -> gameArea.scrollOneForward()
+                }
+            } else {
+                when (it.inputType()) {
+                    InputType.Numpad6 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(1, 0,0)))
+                    InputType.Numpad4 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(-1, 0,0)))
+                    InputType.Numpad8 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(0, -1,0)))
+                    InputType.Numpad2 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(0, 1,0)))
+
+                    InputType.Numpad9 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(1, -1,0)))
+                    InputType.Numpad7 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(-1, -1,0)))
+                    InputType.Numpad3 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(1, 1,0)))
+                    InputType.Numpad1 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(-1, 1,0)))
+                }
+            }*/
+
+            if(it.inputType() != InputType.Character) {
+                gameArea.engine.update(1f)
+            }
+        }
+    }
+
+    private fun loadRexGameArea(gameArea: GameArea<Tile, GameBlock>) {
+        var `is`: InputStream? = null
+        try {
+            `is` = FileInputStream(
+                    File("d:\\Games\\roguelike\\REXPaint-v1.04\\images\\konsti00.xp"))
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+
+        val rex = REXPaintResource.loadREXFile(`is`!!)
+
+        val layers = rex.toLayerList(GameConfig.TILESET)
+        val layer = layers[0]
+        for (y in 0 until layer.height) {
+            for (x in 0 until layer.width) {
+                val p = Positions.create(x, y)
+                val tile = layer.getAbsoluteTileAt(p)
+                if(tile.isPresent) {
+                    var t = tile.get()
+                    if(t is CharacterTile) {
+                        var gb = GameBlock.create(t)
+
+                        //gb.defaultTile = tile.get()
+                        //gb.blockingByTile = isBlocking(tile.get().asCharacterTile().get().character)
+                        gameArea.setBlockAt(Positions.create3DPosition(p.x, p.y, 0), gb)
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun isBlocking(char: Char) : Boolean {
+        Symbols.DOUBLE_LINE_VERTICAL
+        if(char >= 0x2500.toChar() && char <= 0x2593.toChar()) {
+            println("true" + char+" "+char.toByte().toInt().plus(127) + " "+char.toInt())
+            return true
+        }
+        println("false"+char+" "+char.toByte().toInt().and(127)+" "+char.toInt())
+        return false
     }
 
     private fun makeCaves(gameArea: GameArea<Tile, GameBlock>, smoothTimes: Int = 8) {
@@ -83,7 +162,7 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         val height = gameArea.actualSize().yLength
         var tiles: MutableMap<Position, Tile> = mutableMapOf()
         gameArea.actualSize().to2DSize().fetchPositions().forEach { pos ->
-            tiles[pos] = if (Math.random() < 0.5) FLOOR else WALL
+            tiles[pos] = if (Math.random() < 0.5) GameTileRepository.FLOOR else WALL
         }
         val newTiles: MutableMap<Position, Tile> = mutableMapOf()
         for (time in 0 until smoothTimes) {
@@ -99,13 +178,13 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
                                     || y + oy >= height)
                                 continue
 
-                            if (tiles[Positions.create(x + ox, y + oy)] === FLOOR)
+                            if (tiles[Positions.create(x + ox, y + oy)] === GameTileRepository.FLOOR)
                                 floors++
                             else
                                 rocks++
                         }
                     }
-                    newTiles[Positions.create(x, y)] = if (floors >= rocks) FLOOR else WALL
+                    newTiles[Positions.create(x, y)] = if (floors >= rocks) GameTileRepository.FLOOR else WALL
                 }
             }
             tiles = newTiles
@@ -124,7 +203,3 @@ private val WALL = Tiles.newBuilder()
         .withForegroundColor(TileColors.fromString("#999999"))
         .buildCharacterTile()
 
-private val FLOOR = Tiles.newBuilder()
-        .withCharacter(Symbols.INTERPUNCT)
-        .withForegroundColor(ANSITileColor.YELLOW)
-        .buildCharacterTile()
