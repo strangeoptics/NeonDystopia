@@ -22,6 +22,7 @@ ext {
 	mockitoVersion = "1.10.19"
 	assertjVersion = "3.6.2"
 	slf4jVersion = "1.7.25"
+	cobaltversion="2018.1.0-BETA"
 
 	libraries = [
 			slf4j_api       : "org.slf4j:slf4j-api:$slf4jVersion",
@@ -71,10 +72,12 @@ jar {
 dependencies {
     compile libraries.slf4j_api
     compile libraries.slf4j_simple
-
     compile libraries.zircon_core_jvm
     compile libraries.zircon_jvm_swing
 
+	implementation "org.hexworks.cobalt:cobalt.databinding-jvm:$cobalt_version"
+	implementation "org.hexworks.amethyst:amethyst.core-jvm:$amethyst_version"
+	
     testCompile libraries.junit
     testCompile libraries.mockito
     testCompile libraries.assertj

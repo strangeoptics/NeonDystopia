@@ -32,8 +32,8 @@ object GameTileRepository {
             .withForegroundColor(GameColors.ACCENT_COLOR)
             .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
 
-    val FUNGUS = DEFAULT
-            .withCharacter('f')
+    val CITIZEN = DEFAULT
+            .withCharacter('c')
             .withForegroundColor(GameColors.FUNGUS_COLOR)
 
     val BAT = DEFAULT

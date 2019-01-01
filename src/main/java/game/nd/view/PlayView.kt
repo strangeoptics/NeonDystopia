@@ -3,6 +3,7 @@ package game.nd.view
 import game.nd.GameConfig
 import game.nd.block.GameBlock
 import game.nd.builder.GameTileRepository
+import game.nd.extentions.position
 import game.nd.world.WorldImpl
 import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.color.ANSITileColor
@@ -75,7 +76,8 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         var block = gameArea.fetchBlockAt(gameArea.player.position)
         block.get().addEntity(gameArea.player)
 
-        gameArea.fetchBlockAt(Position3D.create(30,40,0)).get().addEntity(gameArea.enemy0)
+        //gameArea.fetchBlockAt(Position3D.create(30,35,0)).get().addEntity(gameArea.enemy0)
+        //gameArea.fetchBlockAt(Position3D.create(40,35,0)).get().addEntity(gameArea.enemy1)
 
 
         screen.addComponent(statsPanel)
@@ -87,7 +89,8 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
 
         screen.onKeyStroke {
 
-            gameArea.playerInputSystem.setKeyInput(it)
+            gameArea.update(screen, it)
+            //gameArea.playerInputSystem.setKeyInput(it)
             /*if(it.isCtrlDown()) {
                 when (it.inputType()) {
                     InputType.ArrowRight -> gameArea.scrollOneRight()
@@ -109,9 +112,7 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
                 }
             }*/
 
-            if(it.inputType() != InputType.Character) {
-                gameArea.engine.update(1f)
-            }
+
         }
     }
 

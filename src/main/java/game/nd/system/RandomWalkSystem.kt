@@ -18,7 +18,7 @@ class RandomWalkSystem(val gameArea: WorldImpl) : EntitySystem() {
             var pc = Mappers.positions.get(entity)
             var mc = Mappers.movements.get(entity)
 
-            mc.positionDelta(directions.get(Random.nextInt(0, 8)))
+            mc.positionDelta(directions.get(Random.nextInt(0, 9)))
             println("RandomWalk: update")
         }
     }

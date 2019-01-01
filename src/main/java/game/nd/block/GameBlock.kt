@@ -1,10 +1,10 @@
 package game.nd.block
 
 
-import com.badlogic.ashley.core.Entity
 import game.nd.builder.GameTileRepository
-import game.nd.entity.GameEntity
-import org.hexworks.zircon.api.Tiles
+import game.nd.extentions.GameEntity
+import game.nd.extentions.tile
+import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.zircon.api.data.BlockSide
 import org.hexworks.zircon.api.data.CharacterTile
 import org.hexworks.zircon.api.data.Tile
@@ -14,7 +14,7 @@ import org.hexworks.zircon.api.graphics.Symbols
 class GameBlock : BlockBase<Tile>() {
 
     var defaultTile: Tile = Tile.defaultTile()
-    private val currentEntities: MutableList<GameEntity> = mutableListOf()
+    private val currentEntities: MutableList<GameEntity<EntityType>> = mutableListOf()
     var blockingByTile: Boolean = false
 
     override val layers get() = mutableListOf(defaultTile, currentEntities.map { it.tile }.lastOrNull() ?: GameTileRepository.EMPTY)
@@ -24,11 +24,11 @@ class GameBlock : BlockBase<Tile>() {
         return Tile.defaultTile()
     }
 
-    fun addEntity(entity: GameEntity) {
+    fun addEntity(entity: GameEntity<EntityType>) {
         currentEntities.add(entity)
     }
 
-    fun removeEntity(entity: GameEntity) : Boolean {
+    fun removeEntity(entity: GameEntity<EntityType>) : Boolean {
         return currentEntities.remove(entity)
     }
 
@@ -47,7 +47,7 @@ class GameBlock : BlockBase<Tile>() {
             return gb
         }
 
-        fun createWith(entity: GameEntity) = GameBlock().also {
+        fun createWith(entity: GameEntity<EntityType>) = GameBlock().also {
             it.addEntity(entity)
         }
 
