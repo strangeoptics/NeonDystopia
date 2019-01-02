@@ -1,5 +1,6 @@
 package game.nd.world
 
+import game.nd.attribute.type.cryptoCounter
 import game.nd.block.GameBlock
 import game.nd.builder.EntityFactory
 import game.nd.extentions.GameEntity
@@ -27,6 +28,7 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D) : GameArea<Tile, GameBl
 
     init {
         player.position = Position3D.create(35,30,0)
+        player.cryptoCounter.cryptosCount = 5
         engine.addEntity(player)
 
     }

@@ -1,9 +1,6 @@
 package game.nd.builder
 
-import game.nd.attribute.BlockOccupier
-import game.nd.attribute.CombatStats
-import game.nd.attribute.EntityPosition
-import game.nd.attribute.EntityTile
+import game.nd.attribute.*
 import game.nd.attribute.type.Citizen
 import game.nd.attribute.type.Player
 import game.nd.extentions.newGameEntityOfType
@@ -19,7 +16,8 @@ object EntityFactory {
                 CombatStats.create(
                         maxHp = 100,
                         attackValue = 10,
-                        defenseValue = 5))
+                        defenseValue = 5),
+                CryptosCounter())
         behaviors(PlayerInputHandler)
         facets(Movable, CameraMover, BlockInspector)
     }
@@ -32,7 +30,8 @@ object EntityFactory {
                 CombatStats.create(
                         maxHp = 50,
                         attackValue = 5,
-                        defenseValue = 3))
+                        defenseValue = 3),
+                CryptosCounter())
         behaviors(RandomWalkBehavior)
         facets(Movable)
     }

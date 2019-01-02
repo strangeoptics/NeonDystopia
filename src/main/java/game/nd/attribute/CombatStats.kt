@@ -34,7 +34,7 @@ data class CombatStats(val maxHpProperty: Property<Int>,
 
     override fun toComponent(width: Int): Component {
         return Components.panel().withSize(width, 5).build().apply {
-            val header = Components.header().withText("Combat stats").build()
+            val header = Components.header().withText("Player Stats").build()
             val health = Components.label().withSize(width, 1).withPosition(0, 1).build()
             val attack = Components.label().withSize(width, 1).withPosition(0, 2).build()
             val defense = Components.label().withSize(width, 1).withPosition(0, 3).build()

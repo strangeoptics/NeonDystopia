@@ -42,9 +42,9 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
 
         val statsPanel = Components.panel()
                 .withSize(Sizes.create(GameConfig.SIDEBAR_WIDTH, GameConfig.WINDOW_HEIGHT))
-                .withTitle("Stats")
+                //.withTitle("Stats")
                 .withAlignmentWithin(screen, ComponentAlignment.TOP_LEFT)
-                .wrapWithBox()
+                //.wrapWithBox()
                 .build()
         statsPanel.addFragment(PlayerStats(gameArea.player).apply {
 
@@ -89,8 +89,10 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
     private fun loadRexGameArea(gameArea: GameArea<Tile, GameBlock>) {
         var `is`: InputStream? = null
         try {
+            /*`is` = FileInputStream(
+                    File("d:\\Games\\roguelike\\REXPaint-v1.04\\images\\konsti00.xp"))*/
             `is` = FileInputStream(
-                    File("d:\\Games\\roguelike\\REXPaint-v1.04\\images\\konsti00.xp"))
+                    File("src/konsti00.xp"))
         } catch (e: Throwable) {
             e.printStackTrace()
         }
