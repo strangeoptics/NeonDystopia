@@ -4,6 +4,7 @@ import game.nd.command.LookAt
 import game.nd.command.MoveTo
 import game.nd.extentions.GameEntity
 import game.nd.extentions.position
+import game.nd.view.dialogs.openHelpDialog
 import game.nd.world.GameContext
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.EntityType
@@ -47,8 +48,11 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                                     player.executeCommand(MoveTo(context, player, newPos))
                                 }
                             }
+                        }
+                    } else {
 
-
+                        if(ks.getCharacter() == 'h') {
+                            openHelpDialog(screen)
                         }
                     }
                 )

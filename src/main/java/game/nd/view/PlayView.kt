@@ -6,6 +6,7 @@ import game.nd.builder.EntityFactory
 import game.nd.builder.GameTileRepository
 import game.nd.events.GameLogEvent
 import game.nd.extentions.position
+import game.nd.view.fragments.PlayerStats
 import game.nd.world.WorldImpl
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.zircon.api.*
@@ -23,6 +24,7 @@ import org.hexworks.zircon.api.input.InputType
 import org.hexworks.zircon.api.kotlin.onKeyStroke
 import org.hexworks.zircon.api.resource.REXPaintResource
 import org.hexworks.zircon.internal.Zircon
+import sun.audio.AudioPlayer.player
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -31,39 +33,25 @@ import java.io.InputStream
 class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
 
     private val screenSize = screen.size
-    private val sidebarWidth = 20
     private val logAreaHeight = 10
-    private val VISIBLE_SIZE = Sizes.create3DSize(GameConfig.WINDOW_WIDTH-sidebarWidth, GameConfig.WINDOW_HEIGHT-logAreaHeight, 1)
+    private val VISIBLE_SIZE = Sizes.create3DSize(GameConfig.WINDOW_WIDTH-GameConfig.SIDEBAR_WIDTH, GameConfig.WINDOW_HEIGHT-logAreaHeight, 1)
     private val ACTUAL_SIZE = Sizes.create3DSize(200, 200, 1)
 
-    private val playerHp: TextArea
-    private val playerHunger: TextArea
-
     init {
+        val gameArea = WorldImpl(VISIBLE_SIZE, ACTUAL_SIZE)
 
         val statsPanel = Components.panel()
-                .withSize(Sizes.create(sidebarWidth, GameConfig.WINDOW_HEIGHT))
+                .withSize(Sizes.create(GameConfig.SIDEBAR_WIDTH, GameConfig.WINDOW_HEIGHT))
                 .withTitle("Stats")
                 .withAlignmentWithin(screen, ComponentAlignment.TOP_LEFT)
                 .wrapWithBox()
                 .build()
-        playerHp = Components.textArea()
-                .withSize(Sizes.create(statsPanel.contentSize.width, 1))
-                .build()
-        playerHp.disable()
-        playerHunger = Components.textArea()
-                .withSize(Sizes.create(statsPanel.contentSize.width, 1))
-                .withPosition(Positions.create(0, 1))
-                .build()
-        playerHunger.disable()
+        statsPanel.addFragment(PlayerStats(gameArea.player).apply {
 
-        statsPanel.addComponent(playerHp)
-        statsPanel.addComponent(playerHunger)
-
-
+        })
 
         val logPanel = Components.panel()
-                .withSize(Sizes.create(GameConfig.WINDOW_WIDTH-sidebarWidth, logAreaHeight))
+                .withSize(Sizes.create(GameConfig.WINDOW_WIDTH-GameConfig.SIDEBAR_WIDTH, logAreaHeight))
                 .withAlignmentWithin(screen, ComponentAlignment.BOTTOM_RIGHT)
                 .wrapWithBox()
                 .withTitle("Log")
@@ -76,14 +64,7 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
                         logArea.addParagraph(text, withNewLine = false, withTypingEffectSpeedInMs = 20)
                     }
                 }
-        /*val logArea = Components.logArea()
-                .withSize(logPanel.size - Sizes.create(2, 2))
-                .build()*/
-        //logPanel.addComponent(logArea)
 
-
-        val gameArea = WorldImpl(VISIBLE_SIZE, ACTUAL_SIZE)
-        //makeCaves(gameArea)
         loadRexGameArea(gameArea)
         var block = gameArea.fetchBlockAt(gameArea.player.position)
         block.get().addEntity(gameArea.player)
@@ -92,43 +73,16 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         citizen0.position = Position3D.create(40,40, 0)
         gameArea.engine.addEntity(citizen0)
         gameArea.fetchBlockAt(citizen0.position).get().addEntity(citizen0)
-        //gameArea.fetchBlockAt(Position3D.create(30,35,0)).get().addEntity(gameArea.enemy0)
-        //gameArea.fetchBlockAt(Position3D.create(40,35,0)).get().addEntity(gameArea.enemy1)
-
 
         screen.addComponent(statsPanel)
         screen.addComponent(logPanel)
         screen.addComponent(GameComponents.newGameComponentBuilder<Tile, GameBlock>()
                 .withVisibleSize(VISIBLE_SIZE)
-                .withGameArea(gameArea).withPosition(sidebarWidth, 0)
+                .withGameArea(gameArea).withPosition(GameConfig.SIDEBAR_WIDTH, 0)
                 .build())
 
         screen.onKeyStroke {
-
             gameArea.update(screen, it)
-            //gameArea.playerInputSystem.setKeyInput(it)
-            /*if(it.isCtrlDown()) {
-                when (it.inputType()) {
-                    InputType.ArrowRight -> gameArea.scrollOneRight()
-                    InputType.ArrowLeft -> gameArea.scrollOneLeft()
-                    InputType.ArrowUp -> gameArea.scrollOneBackward()
-                    InputType.ArrowDown -> gameArea.scrollOneForward()
-                }
-            } else {
-                when (it.inputType()) {
-                    InputType.Numpad6 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(1, 0,0)))
-                    InputType.Numpad4 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(-1, 0,0)))
-                    InputType.Numpad8 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(0, -1,0)))
-                    InputType.Numpad2 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(0, 1,0)))
-
-                    InputType.Numpad9 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(1, -1,0)))
-                    InputType.Numpad7 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(-1, -1,0)))
-                    InputType.Numpad3 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(1, 1,0)))
-                    InputType.Numpad1 -> gameArea.moveEntity(gameArea.player, gameArea.player.position.withRelative(Position3D.create(-1, 1,0)))
-                }
-            }*/
-
-
         }
     }
 

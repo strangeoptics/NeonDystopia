@@ -16,6 +16,7 @@ object GameConfig {
     val THEME = ColorThemes.zenburnVanilla()
     val WINDOW_WIDTH = SCREEN_SIZE.width.div(TILESET.width).times(SCREEN_SIZE_PERCENT).toInt()
     val WINDOW_HEIGHT = SCREEN_SIZE.height.div(TILESET.height).times(SCREEN_SIZE_PERCENT).toInt()
+    const val SIDEBAR_WIDTH = 20
 
     @Suppress("ConstantConditionIf")
     fun buildAppConfig(): AppConfig {
