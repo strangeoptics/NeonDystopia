@@ -3,6 +3,8 @@ package game.nd.block
 
 import game.nd.builder.GameTileRepository
 import game.nd.extentions.GameEntity
+import game.nd.extentions.isPlayer
+import game.nd.extentions.occupiesBlock
 import game.nd.extentions.tile
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.zircon.api.data.BlockSide
@@ -32,6 +34,15 @@ class GameBlock : BlockBase<Tile>() {
         return currentEntities.remove(entity)
     }
 
+    val isOccupied: Boolean
+        get() = currentEntities.any { it.occupiesBlock }
+
+    fun withTopNonPlayerEntity(fn: (GameEntity<EntityType>) -> Unit) {
+        currentEntities.firstOrNull { it.isPlayer.not() }?.let { entity ->
+            fn(entity)
+        }
+    }
+
     companion object {
 
         fun create(): GameBlock = GameBlock()
@@ -41,7 +52,8 @@ class GameBlock : BlockBase<Tile>() {
             gb.defaultTile = tile
             if(tile.character in charArrayOf(Symbols.DOUBLE_LINE_VERTICAL, Symbols.DOUBLE_LINE_HORIZONTAL,
                             Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER, Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER,
-                            Symbols.DOUBLE_LINE_TOP_LEFT_CORNER, Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER)) {
+                            Symbols.DOUBLE_LINE_TOP_LEFT_CORNER, Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER,
+                            Symbols.SINGLE_LINE_HORIZONTAL, Symbols.SINGLE_LINE_VERTICAL)) {
                 gb.blockingByTile = true
             }
             return gb

@@ -1,11 +1,13 @@
 package game.nd.system
 
+import game.nd.command.LookAt
 import game.nd.command.MoveTo
 import game.nd.extentions.GameEntity
 import game.nd.extentions.position
 import game.nd.world.GameContext
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.EntityType
+import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.input.InputType
 import org.hexworks.zircon.api.kotlin.whenKeyStroke
@@ -38,7 +40,15 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                             }
                         }
                         if(newPos != null) {
-                            player.executeCommand(MoveTo(context, player, newPos))
+                            world.whenHasBlockAt(newPos) { block ->
+                                if (block.isOccupied) {
+                                    player.executeCommand(LookAt(context, player, newPos))
+                                } else {
+                                    player.executeCommand(MoveTo(context, player, newPos))
+                                }
+                            }
+
+
                         }
                     }
                 )

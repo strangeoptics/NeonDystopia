@@ -1,7 +1,9 @@
 package game.nd.system
 
+import game.nd.command.MoveCamera
 import game.nd.command.MoveTo
 import game.nd.extentions.GameCommand
+import game.nd.extentions.logGameEvent
 import game.nd.extentions.position
 import game.nd.extentions.whenCommandIs
 import game.nd.world.GameContext
@@ -12,10 +14,12 @@ object Movable : BaseFacet<GameContext>() {
 
     override fun executeCommand(command: GameCommand<out EntityType>) = command.whenCommandIs<MoveTo> { (context, entity, position) ->
 
-        context.world.moveEntity(entity, entity.position, position)
-        entity.position = position
+        if(context.world.moveEntity(entity, entity.position, position)) {
+            entity.position = position
 
-
+            //logGameEvent("You see: ${entity.name}.")
+            entity.executeCommand(MoveCamera(context, entity))
+        }
         /*val world = context.world
         world.whenHasBlockAt(position) { block ->
             if (block.isOccupied) {

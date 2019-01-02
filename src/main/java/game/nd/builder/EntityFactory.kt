@@ -6,8 +6,7 @@ import game.nd.attribute.EntityTile
 import game.nd.attribute.type.Citizen
 import game.nd.attribute.type.Player
 import game.nd.extentions.newGameEntityOfType
-import game.nd.system.Movable
-import game.nd.system.PlayerInputHandler
+import game.nd.system.*
 
 object EntityFactory {
 
@@ -17,13 +16,15 @@ object EntityFactory {
                 EntityPosition(),
                 EntityTile(GameTileRepository.PLAYER))
         behaviors(PlayerInputHandler)
-        facets(Movable)
+        facets(Movable, CameraMover, BlockInspector)
     }
 
     fun newCitizen() = newGameEntityOfType(Citizen) {
         attributes(
                 BlockOccupier,
                 EntityPosition(),
-                EntityTile(GameTileRepository.PLAYER))
+                EntityTile(GameTileRepository.CITIZEN))
+        behaviors(RandomWalkBehavior)
+        facets(Movable)
     }
 }

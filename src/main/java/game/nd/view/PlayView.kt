@@ -2,9 +2,12 @@ package game.nd.view
 
 import game.nd.GameConfig
 import game.nd.block.GameBlock
+import game.nd.builder.EntityFactory
 import game.nd.builder.GameTileRepository
+import game.nd.events.GameLogEvent
 import game.nd.extentions.position
 import game.nd.world.WorldImpl
+import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.component.ComponentAlignment
@@ -19,6 +22,7 @@ import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.InputType
 import org.hexworks.zircon.api.kotlin.onKeyStroke
 import org.hexworks.zircon.api.resource.REXPaintResource
+import org.hexworks.zircon.internal.Zircon
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -62,12 +66,20 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
                 .withSize(Sizes.create(GameConfig.WINDOW_WIDTH-sidebarWidth, logAreaHeight))
                 .withAlignmentWithin(screen, ComponentAlignment.BOTTOM_RIGHT)
                 .wrapWithBox()
-                .withTitle("Game log")
-                .build()
-        val logArea = Components.logArea()
+                .withTitle("Log")
+                .build().also { parent ->
+                    val logArea = Components.logArea()
+                            .withSize(parent.size - Sizes.create(2, 2))
+                            .build()
+                    parent.addComponent(logArea)
+                    Zircon.eventBus.subscribe<GameLogEvent> { (text) ->
+                        logArea.addParagraph(text, withNewLine = false, withTypingEffectSpeedInMs = 20)
+                    }
+                }
+        /*val logArea = Components.logArea()
                 .withSize(logPanel.size - Sizes.create(2, 2))
-                .build()
-        logPanel.addComponent(logArea)
+                .build()*/
+        //logPanel.addComponent(logArea)
 
 
         val gameArea = WorldImpl(VISIBLE_SIZE, ACTUAL_SIZE)
@@ -76,6 +88,10 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         var block = gameArea.fetchBlockAt(gameArea.player.position)
         block.get().addEntity(gameArea.player)
 
+        var citizen0 = EntityFactory.newCitizen()
+        citizen0.position = Position3D.create(40,40, 0)
+        gameArea.engine.addEntity(citizen0)
+        gameArea.fetchBlockAt(citizen0.position).get().addEntity(citizen0)
         //gameArea.fetchBlockAt(Position3D.create(30,35,0)).get().addEntity(gameArea.enemy0)
         //gameArea.fetchBlockAt(Position3D.create(40,35,0)).get().addEntity(gameArea.enemy1)
 

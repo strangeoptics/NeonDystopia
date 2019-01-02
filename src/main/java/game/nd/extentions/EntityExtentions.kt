@@ -3,6 +3,7 @@ package game.nd.extentions
 import game.nd.attribute.BlockOccupier
 import game.nd.attribute.EntityPosition
 import game.nd.attribute.EntityTile
+import game.nd.attribute.type.Player
 import game.nd.world.GameContext
 import org.hexworks.amethyst.api.Attribute
 import org.hexworks.amethyst.api.entity.Entity
@@ -28,7 +29,8 @@ val AnyGameEntity.tile: Tile
 val AnyGameEntity.occupiesBlock: Boolean
     get() = hasAttribute<BlockOccupier>()
 
-
+val AnyGameEntity.isPlayer: Boolean
+    get() = this.type == Player
 
 
 inline fun <reified T : Attribute> AnyGameEntity.attribute(): T = attribute(T::class).orElseThrow {
