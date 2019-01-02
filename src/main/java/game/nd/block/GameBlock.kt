@@ -2,10 +2,7 @@ package game.nd.block
 
 
 import game.nd.builder.GameTileRepository
-import game.nd.extentions.GameEntity
-import game.nd.extentions.isPlayer
-import game.nd.extentions.occupiesBlock
-import game.nd.extentions.tile
+import game.nd.extentions.*
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.zircon.api.data.BlockSide
 import org.hexworks.zircon.api.data.CharacterTile
@@ -36,6 +33,9 @@ class GameBlock : BlockBase<Tile>() {
 
     val isOccupied: Boolean
         get() = currentEntities.any { it.occupiesBlock }
+
+    val hasStairsDown: Boolean
+        get() = currentEntities.any { it.isStairsDown }
 
     fun withTopNonPlayerEntity(fn: (GameEntity<EntityType>) -> Unit) {
         currentEntities.firstOrNull { it.isPlayer.not() }?.let { entity ->

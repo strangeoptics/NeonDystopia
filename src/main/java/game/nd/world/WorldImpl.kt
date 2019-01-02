@@ -1,9 +1,9 @@
 package game.nd.world
 
-import game.nd.attribute.type.cryptoCounter
 import game.nd.block.GameBlock
 import game.nd.builder.EntityFactory
 import game.nd.extentions.GameEntity
+import game.nd.extentions.cryptoCounter
 import game.nd.extentions.position
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.amethyst.api.newEngine

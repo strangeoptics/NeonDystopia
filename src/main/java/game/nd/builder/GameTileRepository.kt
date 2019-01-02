@@ -36,13 +36,6 @@ object GameTileRepository {
             .withCharacter('c')
             .withForegroundColor(GameColors.FUNGUS_COLOR)
 
-    val BAT = DEFAULT
-            .withCharacter('b')
-            .withForegroundColor(GameColors.BAT_COLOR)
-
-    val ZOMBIE = DEFAULT
-            .withCharacter('z')
-            .withForegroundColor(GameColors.ZOMBIE_COLOR)
 
     val STAIRS_UP = DEFAULT
             .withCharacter('<')
@@ -56,43 +49,13 @@ object GameTileRepository {
             .withCharacter('%')
             .withForegroundColor(GameColors.ACCENT_COLOR)
 
-    // items
 
-    val ROCK = DEFAULT
-            .withCharacter(',')
-            .withForegroundColor(GameColors.ROCK_COLOR)
 
-    val MUSHROOM = DEFAULT
-            .withCharacter('m')
-            .withForegroundColor(GameColors.MUSHROOM_COLOR)
-
-    val BAT_MEAT = DEFAULT
-            .withCharacter('m')
-            .withForegroundColor(GameColors.BAT_MEAT_COLOR)
-
-    val DAGGER = DEFAULT
-            .withCharacter('(')
-            .withForegroundColor(ANSITileColor.WHITE)
-
-    val SWORD = DEFAULT
-            .withCharacter('(')
-            .withForegroundColor(ANSITileColor.BRIGHT_WHITE)
-
-    val STAFF = DEFAULT
-            .withCharacter('(')
-            .withForegroundColor(ANSITileColor.YELLOW)
-
-    val LIGHT_ARMOR = DEFAULT
-            .withCharacter('[')
-            .withForegroundColor(ANSITileColor.GREEN)
-
-    val MEDIUM_ARMOR = DEFAULT
-            .withCharacter('[')
-            .withForegroundColor(ANSITileColor.WHITE)
-
-    val HEAVY_ARMOR = DEFAULT
-            .withCharacter('[')
-            .withForegroundColor(ANSITileColor.BRIGHT_WHITE)
+    val WALL_VARIATION_D_V = Tiles.newBuilder()
+            .withCharacter('║')
+            .withForegroundColor(GameColors.WALL_FOREGROUND)
+            .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+            .buildCharacterTile()
 
 
 }

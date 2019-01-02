@@ -3,6 +3,7 @@ package game.nd.view
 import game.nd.GameConfig
 import game.nd.block.GameBlock
 import game.nd.builder.EntityFactory
+import game.nd.builder.GameBlockFactory
 import game.nd.builder.GameTileRepository
 import game.nd.events.GameLogEvent
 import game.nd.extentions.position
@@ -73,6 +74,16 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         citizen0.position = Position3D.create(40,40, 0)
         gameArea.engine.addEntity(citizen0)
         gameArea.fetchBlockAt(citizen0.position).get().addEntity(citizen0)
+        var citizen1 = EntityFactory.newCitizen()
+        citizen1.position = Position3D.create(25,50, 0)
+        gameArea.engine.addEntity(citizen1)
+        gameArea.fetchBlockAt(citizen1.position).get().addEntity(citizen1)
+        var citizen2 = EntityFactory.newCitizen()
+        citizen2.position = Position3D.create(18,20, 0)
+        gameArea.engine.addEntity(citizen2)
+        gameArea.fetchBlockAt(citizen2.position).get().addEntity(citizen2)
+
+        gameArea.setBlockAt(Position3D.create(45, 30, 0), GameBlockFactory.stairsDown())
 
         screen.addComponent(statsPanel)
         screen.addComponent(logPanel)
@@ -108,11 +119,7 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
                 if(tile.isPresent) {
                     var t = tile.get()
                     if(t is CharacterTile) {
-                        var gb = GameBlock.create(t)
-
-                        //gb.defaultTile = tile.get()
-                        //gb.blockingByTile = isBlocking(tile.get().asCharacterTile().get().character)
-                        gameArea.setBlockAt(Positions.create3DPosition(p.x, p.y, 0), gb)
+                        gameArea.setBlockAt(Positions.create3DPosition(p.x, p.y, 0), GameBlockFactory.fromDownTownMap(t))
                     }
                 }
             }

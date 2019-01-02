@@ -8,6 +8,7 @@ import game.nd.view.dialogs.openHelpDialog
 import game.nd.world.GameContext
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.EntityType
+import org.hexworks.cavesofzircon.commands.MoveDown
 import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.input.InputType
@@ -53,6 +54,10 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
 
                         if(ks.getCharacter() == 'h') {
                             openHelpDialog(screen)
+                        } else
+                        if(ks.getCharacter() == '>') {
+                            println("down")
+                            player.executeCommand(MoveDown(context, player, player.position))
                         }
                     }
                 )

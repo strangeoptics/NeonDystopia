@@ -1,10 +1,11 @@
 package game.nd.builder
 
 import game.nd.attribute.*
-import game.nd.attribute.type.Citizen
-import game.nd.attribute.type.Player
+import game.nd.attribute.type.*
 import game.nd.extentions.newGameEntityOfType
 import game.nd.system.*
+import org.hexworks.cavesofzircon.attributes.flags.VisionBlocker
+import org.hexworks.zircon.api.data.Tile
 
 object EntityFactory {
 
@@ -19,7 +20,7 @@ object EntityFactory {
                         defenseValue = 5),
                 CryptosCounter())
         behaviors(PlayerInputHandler)
-        facets(Movable, CameraMover, BlockInspector)
+        facets(Movable, CameraMover, BlockInspector, LevelChanger)
     }
 
     fun newCitizen() = newGameEntityOfType(Citizen) {
@@ -34,5 +35,28 @@ object EntityFactory {
                 CryptosCounter())
         behaviors(RandomWalkBehavior)
         facets(Movable)
+    }
+
+    fun newWall() = newGameEntityOfType(Wall) {
+        attributes(VisionBlocker,
+                EntityPosition(),
+                BlockOccupier,
+                EntityTile(GameTileRepository.WALL_VARIATION_D_V))
+    }
+    fun newWall(tile: Tile) = newGameEntityOfType(Wall) {
+        attributes(VisionBlocker,
+                EntityPosition(),
+                BlockOccupier,
+                EntityTile(tile))
+    }
+
+    fun newStairsDown() = newGameEntityOfType(StairsDown) {
+        attributes(EntityTile(GameTileRepository.STAIRS_DOWN),
+                EntityPosition())
+    }
+
+    fun newStairsUp() = newGameEntityOfType(StairsUp) {
+        attributes(EntityTile(GameTileRepository.STAIRS_UP),
+                EntityPosition())
     }
 }

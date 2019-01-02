@@ -11,5 +11,11 @@ object Player : BaseEntityType(
 object Citizen : BaseEntityType(
         name = "citizen"), ExperienceGainer
 
-val GameEntity<Player>.cryptoCounter: CryptosCounter
-    get() = attribute()
+object Wall : BaseEntityType(
+        name = "wall")
+
+object StairsDown : BaseEntityType(
+        name = "stairs down")
+
+object StairsUp : BaseEntityType(
+        name = "stairs up")

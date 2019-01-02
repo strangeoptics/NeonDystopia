@@ -4,6 +4,8 @@ import game.nd.attribute.BlockOccupier
 import game.nd.attribute.EntityPosition
 import game.nd.attribute.EntityTile
 import game.nd.attribute.type.Player
+import game.nd.attribute.type.StairsDown
+import game.nd.attribute.type.StairsUp
 import game.nd.world.GameContext
 import org.hexworks.amethyst.api.Attribute
 import org.hexworks.amethyst.api.entity.Entity
@@ -32,6 +34,11 @@ val AnyGameEntity.occupiesBlock: Boolean
 val AnyGameEntity.isPlayer: Boolean
     get() = this.type == Player
 
+val AnyGameEntity.isStairsDown: Boolean
+    get() = this.type is StairsDown
+
+val AnyGameEntity.isStairsUp: Boolean
+    get() = this.type is StairsUp
 
 inline fun <reified T : Attribute> AnyGameEntity.attribute(): T = attribute(T::class).orElseThrow {
     NoSuchElementException("Entity '$this' has no property with type '${T::class.simpleName}'.")

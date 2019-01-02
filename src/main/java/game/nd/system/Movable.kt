@@ -14,12 +14,22 @@ object Movable : BaseFacet<GameContext>() {
 
     override fun executeCommand(command: GameCommand<out EntityType>) = command.whenCommandIs<MoveTo> { (context, entity, position) ->
 
-        if(context.world.moveEntity(entity, entity.position, position)) {
+        context.world.whenHasBlockAt(position) { block ->
+            if(block.isOccupied) {
+
+            } else {
+                if(context.world.moveEntity(entity, entity.position, position)) {
+                    entity.position = position
+                    entity.executeCommand(MoveCamera(context, entity))
+                }
+            }
+        }
+        /*if(context.world.moveEntity(entity, entity.position, position)) {
             entity.position = position
 
             //logGameEvent("You see: ${entity.name}.")
             entity.executeCommand(MoveCamera(context, entity))
-        }
+        }*/
         /*val world = context.world
         world.whenHasBlockAt(position) { block ->
             if (block.isOccupied) {

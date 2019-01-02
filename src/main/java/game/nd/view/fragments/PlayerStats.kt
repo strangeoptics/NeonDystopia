@@ -3,8 +3,8 @@ package game.nd.view.fragments
 import game.nd.GameConfig
 import game.nd.attribute.type.Player
 import game.nd.attribute.type.combatStats
-import game.nd.attribute.type.cryptoCounter
 import game.nd.extentions.GameEntity
+import game.nd.extentions.cryptoCounter
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.Sizes
 import org.hexworks.zircon.api.component.Component
