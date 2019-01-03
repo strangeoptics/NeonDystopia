@@ -33,10 +33,10 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                             InputType.Numpad8 -> currentPos.withRelativeY(-1)
                             InputType.Numpad2 -> currentPos.withRelativeY(1)
 
-                            InputType.Numpad9 -> currentPos.withRelative(Position3D.create(1, -1,0))
-                            InputType.Numpad7 -> currentPos.withRelative(Position3D.create(-1, -1,0))
-                            InputType.Numpad3 -> currentPos.withRelative(Position3D.create(1, 1,0))
-                            InputType.Numpad1 -> currentPos.withRelative(Position3D.create(-1, 1,0))
+                            InputType.Numpad9 -> currentPos.withRelativeX(1).withRelativeY(-1)
+                            InputType.Numpad7 -> currentPos.withRelativeX(-1).withRelativeY(-1)
+                            InputType.Numpad3 -> currentPos.withRelativeX(1).withRelativeY(1)
+                            InputType.Numpad1 -> currentPos.withRelativeX(-1).withRelativeY(1)
                             else -> {
                                 null
                             }

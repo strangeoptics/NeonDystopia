@@ -37,6 +37,9 @@ class GameBlock : BlockBase<Tile>() {
     val hasStairsDown: Boolean
         get() = currentEntities.any { it.isStairsDown }
 
+    val hasStairsUp: Boolean
+        get() = currentEntities.any { it.isStairsUp }
+
     fun withTopNonPlayerEntity(fn: (GameEntity<EntityType>) -> Unit) {
         currentEntities.firstOrNull { it.isPlayer.not() }?.let { entity ->
             fn(entity)

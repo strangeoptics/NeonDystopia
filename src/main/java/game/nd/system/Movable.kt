@@ -24,20 +24,5 @@ object Movable : BaseFacet<GameContext>() {
                 }
             }
         }
-        /*if(context.world.moveEntity(entity, entity.position, position)) {
-            entity.position = position
-
-            //logGameEvent("You see: ${entity.name}.")
-            entity.executeCommand(MoveCamera(context, entity))
-        }*/
-        /*val world = context.world
-        world.whenHasBlockAt(position) { block ->
-            if (block.isOccupied) {
-                entity.tryActionsOn(context, block.occupier)
-            } else {
-                world.moveEntity(entity, position)
-                entity.executeCommand(LookAt(context, entity, position))
-            }
-        }*/
     }
 }

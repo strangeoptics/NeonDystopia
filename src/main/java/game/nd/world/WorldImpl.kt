@@ -26,6 +26,7 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D) : GameArea<Tile, GameBl
     val engine = newEngine<GameContext>()
     val player = EntityFactory.newPlayer()
 
+
     init {
         player.position = Position3D.create(35,30,0)
         player.cryptoCounter.cryptosCount = 5
@@ -43,6 +44,7 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D) : GameArea<Tile, GameBl
             block.get().removeEntity(entity)
 
             fetchBlockAt(to).get().addEntity(entity)
+            entity.position = to
 
             return true
         }

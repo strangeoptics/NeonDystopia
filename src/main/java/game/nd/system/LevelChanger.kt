@@ -12,16 +12,20 @@ import org.hexworks.cavesofzircon.commands.MoveUp
 object LevelChanger : BaseFacet<GameContext>() {
     override fun executeCommand(command: GameCommand<out EntityType>): Boolean {
         return command.whenCommandIs<MoveUp> { (context, player, position) ->
-            println("LevelChanger: up")
             context.world.withBlockAt(player.position) { block ->
-
+                when {
+                    block.hasStairsUp -> {
+                        context.world.moveEntity(player, position, position.withRelativeZ(-1))
+                        context.world.scrollOneDown()
+                    }
+                }
             }
         } or command.whenCommandIs<MoveDown> { (context, player, position) ->
-            println("LevelChanger: down")
             context.world.withBlockAt(player.position) { block ->
                 when {
                     block.hasStairsDown -> {
-                        println("LevelChanger: down: stairs block")
+                        context.world.moveEntity(player,position, position.withRelativeZ(1))
+                        context.world.scrollOneUp()
                     }
                 }
             }

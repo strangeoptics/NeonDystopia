@@ -22,7 +22,7 @@ ext {
 	mockitoVersion = "1.10.19"
 	assertjVersion = "3.6.2"
 	slf4jVersion = "1.7.25"
-	cobaltversion="2018.1.0-BETA"
+	cobaltversion="2019.1.0-BETA"
 
 	libraries = [
 			slf4j_api       : "org.slf4j:slf4j-api:$slf4jVersion",

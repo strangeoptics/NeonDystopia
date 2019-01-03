@@ -6,6 +6,7 @@ import game.nd.builder.EntityFactory
 import game.nd.builder.GameBlockFactory
 import game.nd.builder.GameTileRepository
 import game.nd.events.GameLogEvent
+import game.nd.extentions.logGameEvent
 import game.nd.extentions.position
 import game.nd.view.fragments.PlayerStats
 import game.nd.world.WorldImpl
@@ -23,6 +24,7 @@ import org.hexworks.zircon.api.graphics.Symbols
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.InputType
 import org.hexworks.zircon.api.kotlin.onKeyStroke
+import org.hexworks.zircon.api.kotlin.onMouseClicked
 import org.hexworks.zircon.api.resource.REXPaintResource
 import org.hexworks.zircon.internal.Zircon
 import sun.audio.AudioPlayer.player
@@ -36,7 +38,7 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
     private val screenSize = screen.size
     private val logAreaHeight = 10
     private val VISIBLE_SIZE = Sizes.create3DSize(GameConfig.WINDOW_WIDTH-GameConfig.SIDEBAR_WIDTH, GameConfig.WINDOW_HEIGHT-logAreaHeight, 1)
-    private val ACTUAL_SIZE = Sizes.create3DSize(200, 200, 1)
+    private val ACTUAL_SIZE = Sizes.create3DSize(200, 200, 2)
 
     init {
         val gameArea = WorldImpl(VISIBLE_SIZE, ACTUAL_SIZE)
@@ -67,6 +69,7 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
                 }
 
         loadRexGameArea(gameArea)
+        loadRexGameAreaRails(gameArea)
         var block = gameArea.fetchBlockAt(gameArea.player.position)
         block.get().addEntity(gameArea.player)
 
@@ -94,6 +97,13 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
 
         screen.onKeyStroke {
             gameArea.update(screen, it)
+        }
+        screen.onMouseClicked {
+            gameArea.withBlockAt(Position3D.from2DPosition(it.position.withRelativeX(-GameConfig.SIDEBAR_WIDTH))) { block ->
+                block.withTopNonPlayerEntity {
+                    entity -> logGameEvent("You see: ${entity.name}.")
+                }
+            }
         }
     }
 
@@ -124,7 +134,35 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
                 }
             }
         }
+    }
 
+    private fun loadRexGameAreaRails(gameArea: GameArea<Tile, GameBlock>) {
+        var `is`: InputStream? = null
+        try {
+            /*`is` = FileInputStream(
+                    File("d:\\Games\\roguelike\\REXPaint-v1.04\\images\\konsti00.xp"))*/
+            `is` = FileInputStream(
+                    File("d:\\Games\\roguelike\\REXPaint-v1.04\\images\\Rails.xp"))
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
+
+        val rex = REXPaintResource.loadREXFile(`is`!!)
+
+        val layers = rex.toLayerList(GameConfig.TILESET)
+        val layer = layers[0]
+        for (y in 0 until layer.height) {
+            for (x in 0 until layer.width) {
+                val p = Positions.create(x, y)
+                val tile = layer.getAbsoluteTileAt(p)
+                if(tile.isPresent) {
+                    var t = tile.get()
+                    if(t is CharacterTile) {
+                        gameArea.setBlockAt(Positions.create3DPosition(p.x, p.y, 1), GameBlock.create(t))
+                    }
+                }
+            }
+        }
     }
 
     private fun isBlocking(char: Char) : Boolean {
