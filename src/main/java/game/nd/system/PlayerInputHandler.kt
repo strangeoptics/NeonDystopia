@@ -2,13 +2,17 @@ package game.nd.system
 
 import game.nd.command.LookAt
 import game.nd.command.MoveTo
+import game.nd.command.Steal
 import game.nd.extentions.GameEntity
+import game.nd.extentions.logGameEvent
 import game.nd.extentions.position
 import game.nd.view.dialogs.openHelpDialog
 import game.nd.world.GameContext
+import org.hexworks.amethyst.api.Command
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.cavesofzircon.commands.MoveDown
+import org.hexworks.cavesofzircon.commands.MoveUp
 import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.input.InputType
@@ -20,8 +24,12 @@ import org.hexworks.zircon.api.kotlin.whenKeyStroke
  */
 object PlayerInputHandler : BaseBehavior<GameContext>() {
 
+
+    var command : Command<EntityType, GameContext>? = null
+
     override fun update(entity: GameEntity<out EntityType>, context: GameContext): Boolean {
         val (world, screen, input, player) = context
+        var update = true
 
         input.whenKeyStroke {
             ks -> (
@@ -43,6 +51,14 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                         }
                         if(newPos != null) {
                             world.whenHasBlockAt(newPos) { block ->
+                                if(command != null) {
+                                    block.withTopNonPlayerEntity {
+                                        if (command is Steal) {
+                                            player.executeCommand(Steal(context, player, it))
+                                        }
+                                    }
+                                    command = null
+                                } else
                                 if (block.isOccupied) {
                                     player.executeCommand(LookAt(context, player, newPos))
                                 } else {
@@ -51,6 +67,15 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                             }
                         }
                     } else {
+                        val stop = when(ks.getCharacter()) {
+                            's' -> {
+                                command =  Steal(context, player, player)
+                                logGameEvent("steal: wich direction")
+                                false
+                            }
+                            else -> false
+                        }
+                        update = stop
 
                         if(ks.getCharacter() == 'h') {
                             openHelpDialog(screen)
@@ -59,11 +84,16 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                             println("down")
                             player.executeCommand(MoveDown(context, player, player.position))
                         }
+                        else
+                        if(ks.getCharacter() == '<') {
+                            println("up")
+                            player.executeCommand(MoveUp(context, player, player.position))
+                        }
                     }
                 )
         }
 
-        return true
+        return update
     }
 
 }

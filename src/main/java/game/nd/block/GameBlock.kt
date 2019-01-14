@@ -6,17 +6,22 @@ import game.nd.extentions.*
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.zircon.api.data.BlockSide
 import org.hexworks.zircon.api.data.CharacterTile
+import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.base.BlockBase
+import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.graphics.Symbols
 
-class GameBlock : BlockBase<Tile>() {
+class GameBlock() : BlockBase<Tile>() {
 
+    var pos: Position3D = Position3D.create(0,0,0)
     var defaultTile: Tile = Tile.defaultTile()
     private val currentEntities: MutableList<GameEntity<EntityType>> = mutableListOf()
     var blockingByTile: Boolean = false
 
-    override val layers get() = mutableListOf(defaultTile, currentEntities.map { it.tile }.lastOrNull() ?: GameTileRepository.EMPTY)
+    override val layers get() = mutableListOf(defaultTile, currentEntities.map {
+        if(it.isMultitile) it.getMultitile(pos.to2DPosition().minus(it.position.to2DPosition()))
+        else it.tile }.lastOrNull() ?: GameTileRepository.EMPTY)
     //override val layers get() = mutableListOf(defaultTile, Tiles.empty())
 
     override fun fetchSide(side: BlockSide): Tile {

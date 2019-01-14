@@ -57,6 +57,23 @@ object GameTileRepository {
             .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
             .buildCharacterTile()
 
+    val CAR_TIN = Tiles.newBuilder()
+            .withCharacter(Symbols.BLOCK_SOLID)
+            .withForegroundColor(GameColors.CAR)
+            .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+            .buildCharacterTile()
+    val CAR_WINDOW = Tiles.newBuilder()
+            .withCharacter(Symbols.BLOCK_SPARSE)
+            .withForegroundColor(GameColors.CAR)
+            .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+            .buildCharacterTile()
 
+    val CAR_SMALL = arrayListOf(
+            arrayListOf(GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN),
+            arrayListOf(GameTileRepository.CAR_WINDOW, GameTileRepository.CAR_WINDOW, GameTileRepository.CAR_WINDOW),
+            arrayListOf(GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN),
+            arrayListOf(GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN),
+            arrayListOf(GameTileRepository.CAR_WINDOW, GameTileRepository.CAR_WINDOW, GameTileRepository.CAR_WINDOW),
+            arrayListOf(GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN))
 }
 

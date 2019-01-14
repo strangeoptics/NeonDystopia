@@ -1,8 +1,6 @@
 package game.nd.extentions
 
-import game.nd.attribute.BlockOccupier
-import game.nd.attribute.EntityPosition
-import game.nd.attribute.EntityTile
+import game.nd.attribute.*
 import game.nd.attribute.type.Player
 import game.nd.attribute.type.StairsDown
 import game.nd.attribute.type.StairsUp
@@ -12,6 +10,7 @@ import org.hexworks.amethyst.api.entity.Entity
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.cobalt.datatypes.extensions.orElseThrow
+import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Tile
 import kotlin.reflect.full.isSubclassOf
 
@@ -28,6 +27,11 @@ var AnyGameEntity.position
 val AnyGameEntity.tile: Tile
     get() = this.attribute<EntityTile>().tile
 
+fun AnyGameEntity.getMultitile(pos: Position) : Tile = this.attribute<EntityTiles>().getTile(pos)
+
+val AnyGameEntity.isMultitile: Boolean
+    get() = hasAttribute<EntityTiles>()
+
 val AnyGameEntity.occupiesBlock: Boolean
     get() = hasAttribute<BlockOccupier>()
 
@@ -39,6 +43,9 @@ val AnyGameEntity.isStairsDown: Boolean
 
 val AnyGameEntity.isStairsUp: Boolean
     get() = this.type is StairsUp
+
+val AnyGameEntity.hasCryptos: Boolean
+    get() = hasAttribute<CryptosCounter>()
 
 inline fun <reified T : Attribute> AnyGameEntity.attribute(): T = attribute(T::class).orElseThrow {
     NoSuchElementException("Entity '$this' has no property with type '${T::class.simpleName}'.")

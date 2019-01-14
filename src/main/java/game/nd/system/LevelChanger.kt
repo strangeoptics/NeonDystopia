@@ -1,5 +1,6 @@
 package game.nd.system
 
+import game.nd.GameConfig
 import game.nd.extentions.GameCommand
 import game.nd.extentions.position
 import game.nd.extentions.whenCommandIs
@@ -8,6 +9,8 @@ import org.hexworks.amethyst.api.base.BaseFacet
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.cavesofzircon.commands.MoveDown
 import org.hexworks.cavesofzircon.commands.MoveUp
+import org.hexworks.zircon.api.data.Position
+import org.hexworks.zircon.api.data.impl.Position3D
 
 object LevelChanger : BaseFacet<GameContext>() {
     override fun executeCommand(command: GameCommand<out EntityType>): Boolean {
@@ -16,6 +19,7 @@ object LevelChanger : BaseFacet<GameContext>() {
                 when {
                     block.hasStairsUp -> {
                         context.world.moveEntity(player, position, position.withRelativeZ(-1))
+                        //context.world.moveEntity(player, position, position.withRelativeZ(-1))
                         context.world.scrollOneDown()
                     }
                 }
@@ -24,7 +28,8 @@ object LevelChanger : BaseFacet<GameContext>() {
             context.world.withBlockAt(player.position) { block ->
                 when {
                     block.hasStairsDown -> {
-                        context.world.moveEntity(player,position, position.withRelativeZ(1))
+                        context.world.moveEntity(player,position, Position3D.create(24-GameConfig.SIDEBAR_WIDTH,12,1))
+                        //context.world.moveEntity(player,position, position.withRelativeZ(1))
                         context.world.scrollOneUp()
                     }
                 }

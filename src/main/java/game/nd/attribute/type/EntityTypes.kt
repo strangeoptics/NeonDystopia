@@ -11,8 +11,14 @@ object Player : BaseEntityType(
 object Citizen : BaseEntityType(
         name = "citizen"), ExperienceGainer
 
+object Car : BaseEntityType(
+        name = "Car")
+
 object Wall : BaseEntityType(
         name = "wall")
+
+object Window : BaseEntityType(
+        name = "window")
 
 object StairsDown : BaseEntityType(
         name = "stairs down")

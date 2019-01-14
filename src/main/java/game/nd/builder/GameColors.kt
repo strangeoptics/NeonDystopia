@@ -6,6 +6,9 @@ object GameColors {
 
     val WALL_FOREGROUND = TileColors.fromString("#75715E")
     val WALL_BACKGROUND = TileColors.fromString("#3E3D32")
+
+    val CAR = TileColors.fromString("#EEEEEE")
+
     val WALL_FOREGROUND_MOSSY = TileColors.fromString("#607649")
     val WALL_BACKGROUND_MOSSY = TileColors.fromString("#2a3726")
 

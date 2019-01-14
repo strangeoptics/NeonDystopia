@@ -20,7 +20,7 @@ object EntityFactory {
                         defenseValue = 5),
                 CryptosCounter())
         behaviors(PlayerInputHandler)
-        facets(Movable, CameraMover, BlockInspector, LevelChanger)
+        facets(Movable, CameraMover, BlockInspector, LevelChanger, Stealing)
     }
 
     fun newCitizen() = newGameEntityOfType(Citizen) {
@@ -37,6 +37,15 @@ object EntityFactory {
         facets(Movable)
     }
 
+    fun newCar() = newGameEntityOfType(Car) {
+        attributes(
+            BlockOccupier,
+            EntityPosition(),
+            EntityTiles(GameTileRepository.CAR_SMALL))
+        behaviors(CarBehavior)
+        facets(Movable)
+    }
+
     fun newWall() = newGameEntityOfType(Wall) {
         attributes(VisionBlocker,
                 EntityPosition(),
@@ -46,6 +55,12 @@ object EntityFactory {
     fun newWall(tile: Tile) = newGameEntityOfType(Wall) {
         attributes(VisionBlocker,
                 EntityPosition(),
+                BlockOccupier,
+                EntityTile(tile))
+    }
+
+    fun newWindow(tile: Tile) = newGameEntityOfType(Window) {
+        attributes(EntityPosition(),
                 BlockOccupier,
                 EntityTile(tile))
     }
