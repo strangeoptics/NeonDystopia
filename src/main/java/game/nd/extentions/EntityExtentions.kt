@@ -24,6 +24,26 @@ var AnyGameEntity.position
         }
     }
 
+var AnyGameEntity.startPosition
+    get() = attribute(StartStop::class).orElseThrow {
+        IllegalArgumentException("This Entity has no EntityPosition")
+    }.startPosition
+    set(value) {
+        attribute(StartStop::class).map {
+            it.startPosition = value
+        }
+    }
+
+var AnyGameEntity.stopPosition
+    get() = attribute(StartStop::class).orElseThrow {
+        IllegalArgumentException("This Entity has no EntityPosition")
+    }.stopPosition
+    set(value) {
+        attribute(StartStop::class).map {
+            it.stopPosition = value
+        }
+    }
+
 val AnyGameEntity.tile: Tile
     get() = this.attribute<EntityTile>().tile
 

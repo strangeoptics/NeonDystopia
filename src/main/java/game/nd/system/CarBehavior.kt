@@ -6,6 +6,8 @@ import game.nd.component.PositionComponent
 import game.nd.component.RandomWalkComponent
 import game.nd.extentions.GameEntity
 import game.nd.extentions.position
+import game.nd.extentions.startPosition
+import game.nd.extentions.stopPosition
 import game.nd.world.GameContext
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.EntityType
@@ -24,7 +26,13 @@ object CarBehavior : BaseBehavior<GameContext>() {
         val (world, screen, input, player) = context
 
         var dir = directions[1]
-        entity.executeCommand(MoveTo(context, entity, entity.position.withRelative(dir)))
+        var newPos = entity.position.withRelative(dir)
+
+        if( entity.position.y > entity.stopPosition.y) {
+            newPos = entity.startPosition
+        }
+
+        entity.executeCommand(MoveTo(context, entity, newPos))
 
         return true
     }

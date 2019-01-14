@@ -60,11 +60,15 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D) : GameArea<Tile, GameBl
             println()
         }
     }
+    fun addEntity(entity: GameEntity<EntityType>) {
+        fetchBlockAt(entity.position).get().addEntity(entity)
+    }
 
-    fun addEntityMultitile(entity: GameEntity<EntityType>, width: Int, height: Int) {
+    fun addEntityMultitile(entity: GameEntity<EntityType>) {
         val pos = entity.attribute(EntityPosition::class).get().position
-        for(y in pos.y..pos.y+height-1) {
-            for(x in pos.x..pos.x+width-1) {
+        var bb = entity.attribute(EntityTiles::class).get().bb
+        for(y in pos.y..pos.y+bb.y-1) {
+            for(x in pos.x..pos.x+bb.x-1) {
                 fetchBlockAt(Position3D.create(x,y,pos.z)).map { it.addEntity(entity) }
             }
         }

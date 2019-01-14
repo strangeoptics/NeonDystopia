@@ -6,6 +6,7 @@ import game.nd.extentions.newGameEntityOfType
 import game.nd.system.*
 import org.hexworks.cavesofzircon.attributes.flags.VisionBlocker
 import org.hexworks.zircon.api.data.Tile
+import org.hexworks.zircon.api.data.impl.Position3D
 
 object EntityFactory {
 
@@ -23,10 +24,10 @@ object EntityFactory {
         facets(Movable, CameraMover, BlockInspector, LevelChanger, Stealing)
     }
 
-    fun newCitizen() = newGameEntityOfType(Citizen) {
+    fun newCitizen(position: Position3D = Position3D.unknown()) = newGameEntityOfType(Citizen) {
         attributes(
                 BlockOccupier,
-                EntityPosition(),
+                EntityPosition(position),
                 EntityTile(GameTileRepository.CITIZEN),
                 CombatStats.create(
                         maxHp = 50,
@@ -37,10 +38,11 @@ object EntityFactory {
         facets(Movable)
     }
 
-    fun newCar() = newGameEntityOfType(Car) {
+    fun newCar(position: Position3D = Position3D.unknown()) = newGameEntityOfType(Car) {
         attributes(
             BlockOccupier,
-            EntityPosition(),
+            EntityPosition(position),
+            StartStop(position, Position3D.create(20,58,0)),
             EntityTiles(GameTileRepository.CAR_SMALL))
         behaviors(CarBehavior)
         facets(Movable)
