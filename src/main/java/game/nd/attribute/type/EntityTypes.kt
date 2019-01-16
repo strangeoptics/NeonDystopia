@@ -11,6 +11,9 @@ object Player : BaseEntityType(
 object Citizen : BaseEntityType(
         name = "citizen"), ExperienceGainer
 
+object HotelOwner : BaseEntityType(
+        name = "hotel owner"), ExperienceGainer
+
 object Car : BaseEntityType(
         name = "Car")
 

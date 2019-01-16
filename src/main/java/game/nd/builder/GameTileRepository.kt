@@ -36,6 +36,10 @@ object GameTileRepository {
             .withCharacter('c')
             .withForegroundColor(GameColors.FUNGUS_COLOR)
 
+    val HOTEL_OWNER = DEFAULT
+            .withCharacter('h')
+            .withForegroundColor(GameColors.BAT_COLOR)
+
 
     val STAIRS_UP = DEFAULT
             .withCharacter('<')

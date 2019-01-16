@@ -38,6 +38,20 @@ object EntityFactory {
         facets(Movable)
     }
 
+    fun newHotelOwner(position: Position3D = Position3D.unknown()) = newGameEntityOfType(HotelOwner) {
+        attributes(
+                BlockOccupier,
+                EntityPosition(position),
+                EntityTile(GameTileRepository.HOTEL_OWNER),
+                CombatStats.create(
+                        maxHp = 50,
+                        attackValue = 5,
+                        defenseValue = 3),
+                CryptosCounter())
+        //behaviors()
+        facets(Movable)
+    }
+
     fun newCar(start: Position3D = Position3D.unknown(), stop: Position3D = Position3D.unknown(), direction: Position3D = Position3D.unknown(), speed: Int = 1) = newGameEntityOfType(Car) {
         attributes(
             BlockOccupier,

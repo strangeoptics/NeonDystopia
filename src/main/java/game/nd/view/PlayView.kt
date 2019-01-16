@@ -107,6 +107,11 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         gameArea.engine.addEntity(citizen2)
         gameArea.addEntity(citizen2)
 
+        var hotelOwner = EntityFactory.newHotelOwner(Position3D.create(9,31, 0))
+        gameArea.engine.addEntity(hotelOwner)
+        gameArea.addEntity(hotelOwner)
+
+
         var car0 = EntityFactory.newCar(Position3D.create(19,-5,0), Position3D.create(19,58,0), Position3D.create(0,1, 0), 2)
         gameArea.engine.addEntity(car0)
         gameArea.addEntityMultitile(car0)
@@ -141,11 +146,6 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
             }
         }
         screen.onMouseMoved {
-            var pos = it.position.withRelativeX(-GameConfig.SIDEBAR_WIDTH)
-            println("offset: "+gameArea.visibleOffset())
-            println(pos)
-            lb0.text = pos.toString()
-
             lb1.text = ""
             gameArea.withBlockAt(Position3D.from2DPosition(it.position.withRelativeX(-GameConfig.SIDEBAR_WIDTH).plus(gameArea.visibleOffset().to2DPosition()))) { block ->
                 block.withTopNonPlayerEntity {
@@ -154,6 +154,8 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
             }
 
         }
+
+        logGameEvent("You wake up. The room is depressing tiny and sterile. You remember ... a capsule hotel.")
     }
 
     private fun setREXPaintLayer(gameArea: WorldImpl, layer: Layer) {
@@ -203,15 +205,6 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         }
     }
 
-    /*fun lerp(a: TileColor, b: TileColor, t: Float): TileColor {
-        return TileColor.create(
-                (a.red + (b.red - a.red) * t).toInt(),
-                (a.green + (b.green - a.green) * t).toInt(),
-                (a.blue + (b.blue - a.blue) * t).toInt(),
-                (a.alpha + (b.alpha - a.alpha) * t).toInt()
-        )
-    }*/
-
     private fun loadRexGameAreaRails(gameArea: WorldImpl) {
 
         val rex = REXPaintResource.loadREXFile(File("src/Rails01.xp").inputStream())
@@ -230,60 +223,4 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
             }
         }
     }
-
-    private fun isBlocking(char: Char) : Boolean {
-        Symbols.DOUBLE_LINE_VERTICAL
-        if(char >= 0x2500.toChar() && char <= 0x2593.toChar()) {
-            println("true" + char+" "+char.toByte().toInt().plus(127) + " "+char.toInt())
-            return true
-        }
-        println("false"+char+" "+char.toByte().toInt().and(127)+" "+char.toInt())
-        return false
-    }
-
-    private fun makeCaves(gameArea: GameArea<Tile, GameBlock>, smoothTimes: Int = 8) {
-        val width = gameArea.actualSize().xLength
-        val height = gameArea.actualSize().yLength
-        var tiles: MutableMap<Position, Tile> = mutableMapOf()
-        gameArea.actualSize().to2DSize().fetchPositions().forEach { pos ->
-            tiles[pos] = if (Math.random() < 0.5) GameTileRepository.FLOOR else WALL
-        }
-        val newTiles: MutableMap<Position, Tile> = mutableMapOf()
-        for (time in 0 until smoothTimes) {
-
-            for (x in 0 until width) {
-                for (y in 0 until height) {
-                    var floors = 0
-                    var rocks = 0
-
-                    for (ox in -1..1) {
-                        for (oy in -1..1) {
-                            if (x + ox < 0 || x + ox >= width || y + oy < 0
-                                    || y + oy >= height)
-                                continue
-
-                            if (tiles[Positions.create(x + ox, y + oy)] === GameTileRepository.FLOOR)
-                                floors++
-                            else
-                                rocks++
-                        }
-                    }
-                    newTiles[Positions.create(x, y)] = if (floors >= rocks) GameTileRepository.FLOOR else WALL
-                }
-            }
-            tiles = newTiles
-        }
-        tiles.forEach { pos, tile ->
-            val pos3D = Positions.from2DTo3D(pos)
-            var gb = GameBlock.create()
-            gb.defaultTile = tile
-            gameArea.setBlockAt(pos3D, gb)
-        }
-    }
 }
-
-private val WALL = Tiles.newBuilder()
-        .withCharacter('#')
-        .withForegroundColor(TileColors.fromString("#999999"))
-        .buildCharacterTile()
-
