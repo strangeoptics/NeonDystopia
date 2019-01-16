@@ -45,6 +45,8 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                             InputType.Numpad7 -> currentPos.withRelativeX(-1).withRelativeY(-1)
                             InputType.Numpad3 -> currentPos.withRelativeX(1).withRelativeY(1)
                             InputType.Numpad1 -> currentPos.withRelativeX(-1).withRelativeY(1)
+                            InputType.Space ->  {world.toggleTimeModes(world, screen)
+                                    null}
                             else -> {
                                 null
                             }

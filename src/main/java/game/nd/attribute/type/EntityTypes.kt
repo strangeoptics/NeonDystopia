@@ -25,3 +25,9 @@ object StairsDown : BaseEntityType(
 
 object StairsUp : BaseEntityType(
         name = "stairs up")
+
+object Door : BaseEntityType( name = "door")
+
+object Bed : BaseEntityType( name = "Bed")
+
+object Counter : BaseEntityType( name = "Counter")

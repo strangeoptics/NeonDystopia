@@ -6,10 +6,13 @@ import game.nd.builder.EntityFactory
 import game.nd.builder.GameBlockFactory
 import game.nd.builder.GameTileRepository
 import game.nd.events.GameLogEvent
+import game.nd.extentions.lerp
 import game.nd.extentions.logGameEvent
 import game.nd.extentions.position
+import game.nd.extentions.tile
 import game.nd.view.fragments.PlayerStats
 import game.nd.world.WorldImpl
+import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.cobalt.events.api.subscribe
 import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.builder.component.ParagraphBuilder
@@ -22,6 +25,7 @@ import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.game.GameArea
+import org.hexworks.zircon.api.graphics.Layer
 import org.hexworks.zircon.api.graphics.Symbols
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.InputType
@@ -103,9 +107,13 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         gameArea.engine.addEntity(citizen2)
         gameArea.addEntity(citizen2)
 
-        var car0 = EntityFactory.newCar(Position3D.create(19,-5,0))
+        var car0 = EntityFactory.newCar(Position3D.create(19,-5,0), Position3D.create(19,58,0), Position3D.create(0,1, 0), 2)
         gameArea.engine.addEntity(car0)
         gameArea.addEntityMultitile(car0)
+
+        var car1 = EntityFactory.newCar(Position3D.create(24,60,0), Position3D.create(24,-5,0), Position3D.create(0,-1, 0), 1)
+        gameArea.engine.addEntity(car1)
+        gameArea.addEntityMultitile(car1)
 
 
         gameArea.setBlockWithPosAt(Position3D.create(38, 30, 0), GameBlockFactory.stairsDown())
@@ -114,7 +122,7 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         gameArea.setBlockWithPosAt(Position3D.create(6, 14, 1), GameBlockFactory.stairsUp())
         gameArea.setBlockWithPosAt(Position3D.create(7, 14, 1), GameBlockFactory.stairsUp())
 
-
+        gameArea.scrollForwardBy(12)
 
         screen.addComponent(GameComponents.newGameComponentBuilder<Tile, GameBlock>()
                 .withVisibleSize(VISIBLE_SIZE)
@@ -134,81 +142,79 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
         }
         screen.onMouseMoved {
             var pos = it.position.withRelativeX(-GameConfig.SIDEBAR_WIDTH)
+            println("offset: "+gameArea.visibleOffset())
             println(pos)
             lb0.text = pos.toString()
 
             lb1.text = ""
-            gameArea.withBlockAt(Position3D.from2DPosition(it.position.withRelativeX(-GameConfig.SIDEBAR_WIDTH))) { block ->
+            gameArea.withBlockAt(Position3D.from2DPosition(it.position.withRelativeX(-GameConfig.SIDEBAR_WIDTH).plus(gameArea.visibleOffset().to2DPosition()))) { block ->
                 block.withTopNonPlayerEntity {
-                    entity -> lb1.text = "You see: " +entity.name
+                    entity -> lb1.text = "You see: " +entity.name + " " + entity.tile.asCharacterTile().get().character
                 }
             }
 
         }
     }
 
-    private fun loadRexGameArea(gameArea: WorldImpl) {
-        var `is`: InputStream? = null
-        try {
-            /*`is` = FileInputStream(
-                    File("d:\\Games\\roguelike\\REXPaint-v1.04\\images\\konsti00.xp"))*/
-            `is` = FileInputStream(
-                    File("src/konsti00.xp"))
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
-
-        val rex = REXPaintResource.loadREXFile(`is`!!)
-
-        val layers = rex.toLayerList(GameConfig.TILESET)
-        val layer = layers[0]
+    private fun setREXPaintLayer(gameArea: WorldImpl, layer: Layer) {
         for (y in 0 until layer.height) {
             for (x in 0 until layer.width) {
                 val p = Positions.create(x, y)
                 val tile = layer.getAbsoluteTileAt(p)
-                if(tile.isPresent) {
-                    var t = tile.get()
+                tile.map { t ->
                     if(t is CharacterTile) {
                         gameArea.setBlockWithPosAt(Positions.create3DPosition(p.x, p.y, 0), GameBlockFactory.fromDownTownMap(t))
                     }
                 }
             }
         }
+    }
+
+    private fun loadRexGameArea(gameArea: WorldImpl) {
+        val rex = REXPaintResource.loadREXFile(File("src/capsulhotel.xp").inputStream())
+        val layers = rex.toLayerList(GameConfig.TILESET)
+        setREXPaintLayer(gameArea, layers[0])
 
         var gb = gameArea.fetchBlockAt(Position3D.create(27, 22, 0)).get()
         var bgc = gb.defaultTile.foregroundColor
         var magenta = TileColors.create(240, 200, 0)
-        gb.defaultTile = gb.defaultTile.withForegroundColor(lerp(bgc, magenta, 0.6f))
+        gb.defaultTile = gb.defaultTile.withForegroundColor(bgc.lerp(magenta, 0.6f))
 
         gb = gameArea.fetchBlockAt(Position3D.create(28, 22, 0)).get()
         bgc = gb.defaultTile.foregroundColor
         magenta = TileColors.create(240, 200, 0)
-        gb.defaultTile = gb.defaultTile.withForegroundColor(lerp(bgc, magenta, 0.6f))
 
+        gb.defaultTile = gb.defaultTile.withForegroundColor(bgc.lerp(magenta, 0.6f))
+
+
+        val rexCH = REXPaintResource.loadREXFile(File("src/capsulhotel01.xp").inputStream())
+        val layersCH = rexCH.toLayerList(GameConfig.TILESET)
+        val layerCH = layersCH[0]
+        for (y in 0 until layerCH.height) {
+            for (x in 0 until layerCH.width) {
+                val p = Positions.create(7+x, 25+y)
+                val tile = layerCH.getAbsoluteTileAt(Positions.create(x,y))
+                tile.map { t ->
+                    if(t is CharacterTile) {
+                        gameArea.setBlockWithPosAt(Positions.create3DPosition(p.x, p.y, 0), GameBlockFactory.fromCapsulHotel(t))
+                    }
+                }
+            }
+        }
     }
 
-    fun lerp(a: TileColor, b: TileColor, t: Float): TileColor {
+    /*fun lerp(a: TileColor, b: TileColor, t: Float): TileColor {
         return TileColor.create(
                 (a.red + (b.red - a.red) * t).toInt(),
                 (a.green + (b.green - a.green) * t).toInt(),
                 (a.blue + (b.blue - a.blue) * t).toInt(),
                 (a.alpha + (b.alpha - a.alpha) * t).toInt()
         )
-    }
+    }*/
 
     private fun loadRexGameAreaRails(gameArea: WorldImpl) {
-        var `is`: InputStream? = null
-        try {
-            /*`is` = FileInputStream(
-                    File("d:\\Games\\roguelike\\REXPaint-v1.04\\images\\konsti00.xp"))*/
-            `is` = FileInputStream(
-                    File("src/Rails01.xp"))
-                    //File("d:\\Games\\roguelike\\REXPaint-v1.04\\images\\Rails01.xp"))
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
 
-        val rex = REXPaintResource.loadREXFile(`is`!!)
+        val rex = REXPaintResource.loadREXFile(File("src/Rails01.xp").inputStream())
 
         val layers = rex.toLayerList(GameConfig.TILESET)
         val layer = layers[0]
@@ -216,8 +222,7 @@ class PlayView(tileGrid: TileGrid) : BaseView(tileGrid) {
             for (x in 0 until layer.width) {
                 val p = Positions.create(x, y)
                 val tile = layer.getAbsoluteTileAt(p)
-                if(tile.isPresent) {
-                    var t = tile.get()
+                tile.map { t ->
                     if(t is CharacterTile) {
                         gameArea.setBlockWithPosAt(Positions.create3DPosition(p.x, p.y, 1), GameBlock.create(t))
                     }

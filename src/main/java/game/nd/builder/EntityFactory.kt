@@ -38,11 +38,11 @@ object EntityFactory {
         facets(Movable)
     }
 
-    fun newCar(position: Position3D = Position3D.unknown()) = newGameEntityOfType(Car) {
+    fun newCar(start: Position3D = Position3D.unknown(), stop: Position3D = Position3D.unknown(), direction: Position3D = Position3D.unknown(), speed: Int = 1) = newGameEntityOfType(Car) {
         attributes(
             BlockOccupier,
-            EntityPosition(position),
-            StartStop(position, Position3D.create(20,58,0)),
+            EntityPosition(start),
+            StartStop(start, stop, direction, speed),
             EntityTiles(GameTileRepository.CAR_SMALL))
         behaviors(CarBehavior)
         facets(Movable)
@@ -74,6 +74,21 @@ object EntityFactory {
 
     fun newStairsUp() = newGameEntityOfType(StairsUp) {
         attributes(EntityTile(GameTileRepository.STAIRS_UP),
+                EntityPosition())
+    }
+
+    fun newDoor(tile: Tile) = newGameEntityOfType(Door) {
+        attributes(EntityTile(tile),
+                EntityPosition())
+    }
+
+    fun newBed(tile: Tile) = newGameEntityOfType(Bed) {
+        attributes(EntityTile(tile),
+                EntityPosition())
+    }
+
+    fun newCounter(tile: Tile) = newGameEntityOfType(Counter) {
+        attributes(EntityTile(tile),
                 EntityPosition())
     }
 }

@@ -17,9 +17,11 @@ import org.hexworks.zircon.api.data.impl.Size3D
 import org.hexworks.zircon.api.game.GameArea
 import org.hexworks.zircon.api.input.Input
 import org.hexworks.zircon.api.input.InputType
+import org.hexworks.zircon.api.input.KeyStroke
 import org.hexworks.zircon.api.kotlin.whenKeyStroke
 import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.internal.game.InMemoryGameArea
+import kotlin.concurrent.thread
 
 class WorldImpl(visibleSize: Size3D, actualSize: Size3D) : GameArea<Tile, GameBlock> by GameAreaBuilder.newBuilder<Tile, GameBlock>()
         .withVisibleSize(visibleSize)
@@ -33,7 +35,7 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D) : GameArea<Tile, GameBl
 
 
     init {
-        player.position = Position3D.create(35,30,0)
+        player.position = Position3D.create(13,40,0)
         player.cryptoCounter.cryptosCount = 5
         engine.addEntity(player)
 
@@ -133,5 +135,24 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D) : GameArea<Tile, GameBl
 
     fun withBlockAt(position: Position3D, fn: (GameBlock) -> Unit) {
         fetchBlockAt(position).map(fn)
+    }
+
+    var t : Thread? = null
+    var run = true
+    fun toggleTimeModes(world: WorldImpl, screen: Screen) {
+        if(t != null) {
+            run = false
+            t = null
+        } else {
+            run = true
+            t = thread(start = true) {
+                while (run) {
+
+                    println("test")
+                    update(screen, KeyStroke(character = ' ', type = InputType.Numpad5))
+                    Thread.sleep(500)
+                }
+            }
+        }
     }
 }

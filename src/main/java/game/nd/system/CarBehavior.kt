@@ -1,6 +1,7 @@
 package game.nd.system
 
 import com.badlogic.ashley.core.Family
+import game.nd.attribute.StartStop
 import game.nd.command.MoveTo
 import game.nd.component.PositionComponent
 import game.nd.component.RandomWalkComponent
@@ -11,6 +12,7 @@ import game.nd.extentions.stopPosition
 import game.nd.world.GameContext
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.EntityType
+import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.zircon.api.data.impl.Position3D
 
 object CarBehavior : BaseBehavior<GameContext>() {
@@ -25,13 +27,17 @@ object CarBehavior : BaseBehavior<GameContext>() {
     override fun update(entity: GameEntity<EntityType>, context: GameContext): Boolean {
         val (world, screen, input, player) = context
 
-        var dir = directions[1]
-        var newPos = entity.position.withRelative(dir)
+        val startStop = entity.attribute(StartStop::class)
+        val (start, stop, direction, speed) = startStop.get()
 
-        if( entity.position.y > entity.stopPosition.y) {
+        var newPos = entity.position.withRelative(Position3D.create(direction.x * speed, direction.y * speed, direction.z))
+
+        if(direction.y == 1 && entity.position.y > entity.stopPosition.y) {
+            newPos = entity.startPosition
+        } else
+        if(direction.y == -1 && entity.position.y < entity.stopPosition.y) {
             newPos = entity.startPosition
         }
-
         entity.executeCommand(MoveTo(context, entity, newPos))
 
         return true

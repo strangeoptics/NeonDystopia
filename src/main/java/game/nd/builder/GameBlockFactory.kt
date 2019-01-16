@@ -15,6 +15,21 @@ object GameBlockFactory {
 
     fun window(tile: CharacterTile) = GameBlock.createWith(EntityFactory.newWindow(tile))
 
+    fun door(tile: CharacterTile) = GameBlock.createWith(EntityFactory.newDoor(tile))
+
+    fun bed(tile: CharacterTile) = GameBlock.createWith(EntityFactory.newBed(tile))
+
+    fun counter(tile: CharacterTile) = GameBlock.createWith(EntityFactory.newCounter(tile))
+
+    fun fromCapsulHotel(tile: CharacterTile) : GameBlock {
+        return when(tile.character) {
+            Symbols.WHITE_CIRCLE, '+' -> door(tile)
+            Symbols.BLOCK_SOLID, Symbols.RIGHT_HALF_BLOCK -> bed(tile)
+            Symbols.LEFT_HALF_BLOCK, Symbols.UPPER_HALF_BLOCK -> counter(tile)
+            '<' -> stairsUp()
+            else -> fromDownTownMap(tile)
+        }
+    }
 
     fun fromDownTownMap(tile: CharacterTile) : GameBlock {
         if(wallChars.contains(tile.character)) {
@@ -23,11 +38,13 @@ object GameBlockFactory {
         if(windowChars.contains(tile.character)) {
             return window(tile)
         }
+
         return GameBlock.create(tile)
     }
 
     val wallChars = charArrayOf(Symbols.DOUBLE_LINE_VERTICAL, Symbols.DOUBLE_LINE_HORIZONTAL,
             Symbols.DOUBLE_LINE_BOTTOM_LEFT_CORNER, Symbols.DOUBLE_LINE_BOTTOM_RIGHT_CORNER,
-            Symbols.DOUBLE_LINE_TOP_LEFT_CORNER, Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER)
+            Symbols.DOUBLE_LINE_TOP_LEFT_CORNER, Symbols.DOUBLE_LINE_TOP_RIGHT_CORNER,
+            Symbols.DOUBLE_LINE_T_DOWN, Symbols.DOUBLE_LINE_T_LEFT, Symbols.DOUBLE_LINE_T_RIGHT, Symbols.DOUBLE_LINE_T_UP)
     val windowChars = charArrayOf(Symbols.SINGLE_LINE_HORIZONTAL, Symbols.SINGLE_LINE_VERTICAL)
 }
