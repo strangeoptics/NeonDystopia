@@ -6,6 +6,7 @@ import game.nd.block.GameBlock
 import game.nd.builder.EntityFactory
 import game.nd.command.Steal
 import game.nd.extentions.*
+import game.nd.view.PlayView
 import org.hexworks.amethyst.api.Command
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.amethyst.api.newEngine
@@ -15,6 +16,7 @@ import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.data.impl.Size3D
 import org.hexworks.zircon.api.game.GameArea
+import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.Input
 import org.hexworks.zircon.api.input.InputType
 import org.hexworks.zircon.api.input.KeyStroke
@@ -23,7 +25,7 @@ import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.internal.game.InMemoryGameArea
 import kotlin.concurrent.thread
 
-class WorldImpl(visibleSize: Size3D, actualSize: Size3D) : GameArea<Tile, GameBlock> by GameAreaBuilder.newBuilder<Tile, GameBlock>()
+class WorldImpl(visibleSize: Size3D, actualSize: Size3D, val playView: PlayView) : GameArea<Tile, GameBlock> by GameAreaBuilder.newBuilder<Tile, GameBlock>()
         .withVisibleSize(visibleSize)
         .withActualSize(actualSize)
         .withDefaultBlock(GameBlock.create())
@@ -38,7 +40,6 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D) : GameArea<Tile, GameBl
         player.position = Position3D.create(13,40,0)
         player.cryptoCounter.cryptosCount = 5
         engine.addEntity(player)
-
     }
 
     fun setBlockWithPosAt(position: Position3D, block: GameBlock) {

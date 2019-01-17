@@ -21,7 +21,7 @@ object EntityFactory {
                         defenseValue = 5),
                 CryptosCounter())
         behaviors(PlayerInputHandler)
-        facets(Movable, CameraMover, BlockInspector, LevelChanger, Stealing)
+        facets(Movable, CameraMover, BlockInspector, LevelChanger, Stealing, Opener)
     }
 
     fun newCitizen(position: Position3D = Position3D.unknown()) = newGameEntityOfType(Citizen) {
@@ -91,9 +91,11 @@ object EntityFactory {
                 EntityPosition())
     }
 
-    fun newDoor(tile: Tile) = newGameEntityOfType(Door) {
+    fun newDoor(tile: Tile, locked: Boolean = true) = newGameEntityOfType(Door) {
         attributes(EntityTile(tile),
-                EntityPosition())
+                EntityPosition(),
+                BlockOccupier,
+                Openable(locked))
     }
 
     fun newBed(tile: Tile) = newGameEntityOfType(Bed) {

@@ -2,10 +2,13 @@ package game.nd.system
 
 import game.nd.command.LookAt
 import game.nd.command.MoveTo
+import game.nd.command.Open
 import game.nd.command.Steal
 import game.nd.extentions.GameEntity
 import game.nd.extentions.logGameEvent
 import game.nd.extentions.position
+import game.nd.view.ShopView
+import game.nd.view.StartView
 import game.nd.view.dialogs.openHelpDialog
 import game.nd.world.GameContext
 import org.hexworks.amethyst.api.Command
@@ -55,9 +58,11 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                             world.whenHasBlockAt(newPos) { block ->
                                 if(command != null) {
                                     block.withTopNonPlayerEntity {
-                                        if (command is Steal) {
-                                            player.executeCommand(Steal(context, player, it))
+                                        when(command) {
+                                            is Steal -> player.executeCommand(Steal(context, player, it))
+                                            is Open -> player.executeCommand(Open(context, player, it))
                                         }
+
                                     }
                                     command = null
                                 } else
@@ -72,25 +77,26 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                         val stop = when(ks.getCharacter()) {
                             's' -> {
                                 command =  Steal(context, player, player)
-                                logGameEvent("steal: wich direction")
+                                logGameEvent("steal: which direction")
+                                false
+                            }
+                            'o' -> {
+                                command = Open(context, player, player)
+                                logGameEvent("open: which direction")
                                 false
                             }
                             else -> false
                         }
                         update = stop
 
-                        if(ks.getCharacter() == 'h') {
-                            openHelpDialog(screen)
-                        } else
-                        if(ks.getCharacter() == '>') {
-                            println("down")
-                            player.executeCommand(MoveDown(context, player, player.position))
+                        when(ks.getCharacter()) {
+                            'h' -> openHelpDialog(screen)
+                            '>' -> player.executeCommand(MoveDown(context, player, player.position))
+                            '<' -> player.executeCommand(MoveUp(context, player, player.position))
+                            'l' -> player.executeCommand(LookAt(context, player, player.position))
+                            'p' -> world.playView.replaceWith(ShopView(world.playView))
                         }
-                        else
-                        if(ks.getCharacter() == '<') {
-                            println("up")
-                            player.executeCommand(MoveUp(context, player, player.position))
-                        }
+
                     }
                 )
         }
