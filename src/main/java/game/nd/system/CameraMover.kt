@@ -1,17 +1,17 @@
 package game.nd.system
 
 import game.nd.command.MoveCamera
-import game.nd.command.MoveTo
 import game.nd.extentions.GameCommand
 import game.nd.extentions.position
-import game.nd.extentions.whenCommandIs
+import game.nd.extentions.responseWhenCommandIs
 import game.nd.world.GameContext
+import org.hexworks.amethyst.api.Consumed
 import org.hexworks.amethyst.api.base.BaseFacet
 import org.hexworks.amethyst.api.entity.EntityType
 
 object CameraMover : BaseFacet<GameContext>() {
 
-    override fun executeCommand(command: GameCommand<out EntityType>) = command.whenCommandIs<MoveCamera> {
+    override fun executeCommand(command: GameCommand<out EntityType>) = command.responseWhenCommandIs<MoveCamera> {
         (context, entity) ->
 
         val (world, screen, input, player) = context
@@ -34,5 +34,6 @@ object CameraMover : BaseFacet<GameContext>() {
         if (screenPos.x > halfWidth) {
             world.scrollOneRight()
         }
+        Consumed
     }
 }

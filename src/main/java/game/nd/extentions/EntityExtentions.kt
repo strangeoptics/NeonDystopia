@@ -13,6 +13,7 @@ import org.hexworks.cobalt.datatypes.extensions.orElseThrow
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Tile
 import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.isSuperclassOf
 
 var AnyGameEntity.position
     get() = attribute(EntityPosition::class).orElseThrow {
@@ -82,4 +83,9 @@ inline fun <reified T : EntityType> AnyGameEntity.whenTypeIs(fn: (Entity<T, Game
     if (this.type::class.isSubclassOf(T::class)) {
         fn(this as Entity<T, GameContext>)
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T : Attribute> AnyGameEntity.attributesOfType(): List<T> {
+    return fetchAttributes().filter { T::class.isSuperclassOf(it::class) }.toList() as List<T>
 }

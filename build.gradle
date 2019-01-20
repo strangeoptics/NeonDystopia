@@ -32,6 +32,7 @@ ext {
 			junit           : "junit:junit:$junitVersion",
 			mockito         : "org.mockito:mockito-all:$mockitoVersion",
 			assertj         : "org.assertj:assertj-core:$assertjVersion"
+			
 	]
 }
 
@@ -81,8 +82,7 @@ dependencies {
     testCompile libraries.junit
     testCompile libraries.mockito
     testCompile libraries.assertj
-
-	compile "com.badlogicgames.ashley:ashley:1.7.0"
+	
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {

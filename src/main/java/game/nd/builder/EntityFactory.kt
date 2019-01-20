@@ -5,8 +5,10 @@ import game.nd.attribute.type.*
 import game.nd.extentions.newGameEntityOfType
 import game.nd.system.*
 import org.hexworks.cavesofzircon.attributes.flags.VisionBlocker
+import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Position3D
+import org.hexworks.zircon.api.resource.BuiltInGraphicTilesetResource
 
 object EntityFactory {
 
@@ -19,9 +21,10 @@ object EntityFactory {
                         maxHp = 100,
                         attackValue = 10,
                         defenseValue = 5),
-                CryptosCounter())
+                CryptosCounter(),
+                Inventory(10))
         behaviors(PlayerInputHandler)
-        facets(Movable, CameraMover, BlockInspector, LevelChanger, Stealing, Opener)
+        facets(Movable, CameraMover, BlockInspector, LevelChanger, Stealing, Opener, ItemDropper)
     }
 
     fun newCitizen(position: Position3D = Position3D.unknown()) = newGameEntityOfType(Citizen) {
@@ -106,5 +109,33 @@ object EntityFactory {
     fun newCounter(tile: Tile) = newGameEntityOfType(Counter) {
         attributes(EntityTile(tile),
                 EntityPosition())
+    }
+
+    // items /////////////////////
+
+    //// Armor //////////////////
+
+    fun newJacket() = newGameEntityOfType(Jacket) {
+        attributes(ItemCombatStats(combatItemType = "Armor"),
+                EntityTile(),
+                EntityPosition(),
+                ItemIcon(Tiles.newBuilder()
+                        .withName("Leather jacket")
+                        .withTileset(BuiltInGraphicTilesetResource.NETHACK_16X16)
+                        .buildGraphicTile()))
+    }
+
+    //// Weapons ///////////////
+
+    fun newDagger() = newGameEntityOfType(Dagger) {
+        attributes(ItemIcon(Tiles.newBuilder()
+                .withName("Dagger")
+                .withTileset(BuiltInGraphicTilesetResource.NETHACK_16X16)
+                .buildGraphicTile()),
+                EntityPosition(),
+                ItemCombatStats(
+                        attackValue = 4,
+                        combatItemType = "Weapon"),
+                EntityTile(GameTileRepository.dagger()))
     }
 }

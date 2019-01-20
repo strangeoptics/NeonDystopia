@@ -2,27 +2,27 @@ package game.nd.world
 
 import game.nd.attribute.EntityPosition
 import game.nd.attribute.EntityTiles
+import game.nd.attribute.Inventory
 import game.nd.block.GameBlock
 import game.nd.builder.EntityFactory
-import game.nd.command.Steal
-import game.nd.extentions.*
+import game.nd.extentions.GameEntity
+import game.nd.extentions.attribute
+import game.nd.extentions.cryptoCounter
+import game.nd.extentions.position
 import game.nd.view.PlayView
-import org.hexworks.amethyst.api.Command
+import org.hexworks.amethyst.api.Engines.newEngine
+import org.hexworks.amethyst.api.entity.Entity
 import org.hexworks.amethyst.api.entity.EntityType
-import org.hexworks.amethyst.api.newEngine
 import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.zircon.api.builder.game.GameAreaBuilder
 import org.hexworks.zircon.api.data.Tile
 import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.data.impl.Size3D
 import org.hexworks.zircon.api.game.GameArea
-import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.input.Input
 import org.hexworks.zircon.api.input.InputType
 import org.hexworks.zircon.api.input.KeyStroke
-import org.hexworks.zircon.api.kotlin.whenKeyStroke
 import org.hexworks.zircon.api.screen.Screen
-import org.hexworks.zircon.internal.game.InMemoryGameArea
 import kotlin.concurrent.thread
 
 class WorldImpl(visibleSize: Size3D, actualSize: Size3D, val playView: PlayView) : GameArea<Tile, GameBlock> by GameAreaBuilder.newBuilder<Tile, GameBlock>()
@@ -39,6 +39,9 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D, val playView: PlayView)
     init {
         player.position = Position3D.create(13,40,0)
         player.cryptoCounter.cryptosCount = 5
+        var inventory = player.attribute<Inventory>()
+        inventory.addItem(EntityFactory.newJacket())
+        inventory.addItem(EntityFactory.newDagger())
         engine.addEntity(player)
     }
 
@@ -65,6 +68,18 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D, val playView: PlayView)
     }
     fun addEntity(entity: GameEntity<EntityType>) {
         fetchBlockAt(entity.position).get().addEntity(entity)
+    }
+    /**
+     * Adds the given [Entity] at the given [Position3D].
+     * Has no effect if this world already contains the
+     * given [Entity].
+     */
+    fun addEntity(entity: Entity<EntityType, GameContext>, position: Position3D) {
+        engine.addEntity(entity)
+        fetchBlockAt(position).map {
+            it.addEntity(entity)
+        }
+        entity.position = position
     }
 
     fun addEntityMultitile(entity: GameEntity<EntityType>) {

@@ -1,9 +1,6 @@
 package game.nd.system
 
-import com.badlogic.ashley.core.Family
 import game.nd.command.MoveTo
-import game.nd.component.PositionComponent
-import game.nd.component.RandomWalkComponent
 import game.nd.extentions.GameEntity
 import game.nd.extentions.position
 import game.nd.world.GameContext
@@ -13,8 +10,6 @@ import org.hexworks.zircon.api.data.impl.Position3D
 import kotlin.random.Random
 
 object RandomWalkBehavior  : BaseBehavior<GameContext>() {
-
-    private val FAMILY = Family.all(PositionComponent::class.java, RandomWalkComponent::class.java).get()
 
     val directions = listOf<Position3D>(
             Position3D.create(-1,1,0), Position3D.create(0,1,0), Position3D.create(1,1,0),

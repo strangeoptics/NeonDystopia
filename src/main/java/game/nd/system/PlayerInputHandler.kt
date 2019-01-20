@@ -10,6 +10,7 @@ import game.nd.extentions.position
 import game.nd.view.ShopView
 import game.nd.view.StartView
 import game.nd.view.dialogs.openHelpDialog
+import game.nd.view.dialogs.openInventoryDialog
 import game.nd.world.GameContext
 import org.hexworks.amethyst.api.Command
 import org.hexworks.amethyst.api.base.BaseBehavior
@@ -95,6 +96,7 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                             '<' -> player.executeCommand(MoveUp(context, player, player.position))
                             'l' -> player.executeCommand(LookAt(context, player, player.position))
                             'p' -> world.playView.replaceWith(ShopView(world.playView))
+                            'i' -> openInventoryDialog(context)
                         }
 
                     }
