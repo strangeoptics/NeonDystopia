@@ -19,6 +19,7 @@ object Opener : BaseFacet<GameContext>() {
             println("openable")
             trgEntity.attribute(BlockOccupier::class).map {
                 //trgEntity. remove BlockOccupier
+
             }
         }
         Consumed

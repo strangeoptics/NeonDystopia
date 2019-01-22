@@ -15,7 +15,7 @@ object GameBlockFactory {
 
     fun window(tile: CharacterTile) = GameBlock.createWith(EntityFactory.newWindow(tile))
 
-    fun door(tile: CharacterTile) = GameBlock.createWith(EntityFactory.newDoor(tile))
+    fun door(tile: CharacterTile) = if(tile.character == '+') GameBlock.createWith(EntityFactory.newDoorOpened(tile)) else GameBlock.createWith(EntityFactory.newDoor(tile))
 
     fun bed(tile: CharacterTile) = GameBlock.createWith(EntityFactory.newBed(tile))
 

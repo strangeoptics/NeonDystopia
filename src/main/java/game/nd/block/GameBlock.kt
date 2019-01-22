@@ -4,15 +4,19 @@ package game.nd.block
 import game.nd.builder.GameTileRepository
 import game.nd.extentions.*
 import org.hexworks.amethyst.api.entity.EntityType
-import org.hexworks.zircon.api.data.BlockSide
-import org.hexworks.zircon.api.data.CharacterTile
-import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.data.Tile
+import org.hexworks.zircon.api.data.*
 import org.hexworks.zircon.api.data.base.BlockBase
 import org.hexworks.zircon.api.data.impl.Position3D
 import org.hexworks.zircon.api.graphics.Symbols
 
 class GameBlock() : BlockBase<Tile>() {
+    override fun setSide(side: BlockSide, tile: Tile) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createCopy(): Block<Tile> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     var pos: Position3D = Position3D.create(0,0,0)
     var defaultTile: Tile = Tile.defaultTile()
@@ -27,6 +31,9 @@ class GameBlock() : BlockBase<Tile>() {
     override fun fetchSide(side: BlockSide): Tile {
         return Tile.defaultTile()
     }
+
+    val entities: Iterable<GameEntity<EntityType>>
+        get() = currentEntities.toList()
 
     fun addEntity(entity: GameEntity<EntityType>) {
         currentEntities.add(entity)

@@ -3,16 +3,15 @@ package game.nd.world
 import game.nd.attribute.EntityPosition
 import game.nd.attribute.EntityTiles
 import game.nd.attribute.Inventory
+import game.nd.attribute.type.Item
 import game.nd.block.GameBlock
 import game.nd.builder.EntityFactory
-import game.nd.extentions.GameEntity
-import game.nd.extentions.attribute
-import game.nd.extentions.cryptoCounter
-import game.nd.extentions.position
+import game.nd.extentions.*
 import game.nd.view.PlayView
 import org.hexworks.amethyst.api.Engines.newEngine
 import org.hexworks.amethyst.api.entity.Entity
 import org.hexworks.amethyst.api.entity.EntityType
+import org.hexworks.cobalt.datatypes.extensions.fold
 import org.hexworks.cobalt.datatypes.extensions.map
 import org.hexworks.zircon.api.builder.game.GameAreaBuilder
 import org.hexworks.zircon.api.data.Tile
@@ -80,6 +79,12 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D, val playView: PlayView)
             it.addEntity(entity)
         }
         entity.position = position
+    }
+
+    fun removeEntity(entity: Entity<EntityType, GameContext>) {
+        engine.removeEntity(entity)
+        fetchBlockAt(entity.position).map { it.removeEntity(entity) }
+        entity.position = Position3D.unknown()
     }
 
     fun addEntityMultitile(entity: GameEntity<EntityType>) {
@@ -170,5 +175,15 @@ class WorldImpl(visibleSize: Size3D, actualSize: Size3D, val playView: PlayView)
                 }
             }
         }
+    }
+
+    fun fetchEntitiesAt(pos: Position3D): List<GameEntity<EntityType>> {
+        return fetchBlockAt(pos).fold(whenEmpty = { kotlin.collections.listOf() }, whenPresent = {
+            it.entities.toList()
+        })
+    }
+
+    fun findItemsAt(pos: Position3D): List<GameEntity<Item>> {
+        return fetchEntitiesAt(pos).filterType()
     }
 }

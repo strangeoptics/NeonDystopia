@@ -76,6 +76,10 @@ inline fun <reified T : Attribute> AnyGameEntity.hasAttribute() = attribute(T::c
 
 inline fun <reified T : Attribute> AnyGameEntity.whenHasAttribute(crossinline fn: (T) -> Unit) = attribute(T::class).map(fn)
 
+@Suppress("UNCHECKED_CAST")
+inline fun <reified T : EntityType> Iterable<AnyGameEntity>.filterType(): List<Entity<T, GameContext>> {
+    return filter { T::class.isSuperclassOf(it.type::class) }.toList() as List<Entity<T, GameContext>>
+}
 
 
 @Suppress("UNCHECKED_CAST")

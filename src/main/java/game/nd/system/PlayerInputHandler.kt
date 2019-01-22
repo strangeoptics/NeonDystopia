@@ -1,9 +1,6 @@
 package game.nd.system
 
-import game.nd.command.LookAt
-import game.nd.command.MoveTo
-import game.nd.command.Open
-import game.nd.command.Steal
+import game.nd.command.*
 import game.nd.extentions.GameEntity
 import game.nd.extentions.logGameEvent
 import game.nd.extentions.position
@@ -95,8 +92,9 @@ object PlayerInputHandler : BaseBehavior<GameContext>() {
                             '>' -> player.executeCommand(MoveDown(context, player, player.position))
                             '<' -> player.executeCommand(MoveUp(context, player, player.position))
                             'l' -> player.executeCommand(LookAt(context, player, player.position))
-                            'p' -> world.playView.replaceWith(ShopView(world.playView))
+                            's' -> world.playView.replaceWith(ShopView(world.playView))
                             'i' -> openInventoryDialog(context)
+                            'p' -> player.executeCommand(PickItemUp(context, player, player.position))
                         }
 
                     }

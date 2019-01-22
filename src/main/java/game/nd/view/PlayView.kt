@@ -1,10 +1,7 @@
 package game.nd.view
 
 import game.nd.GameConfig
-import game.nd.attribute.BlockOccupier
-import game.nd.attribute.EntityPosition
-import game.nd.attribute.EntityTile
-import game.nd.attribute.Openable
+import game.nd.attribute.*
 import game.nd.attribute.type.Door
 import game.nd.block.GameBlock
 import game.nd.builder.EntityFactory
@@ -12,6 +9,7 @@ import game.nd.builder.GameBlockFactory
 import game.nd.builder.GameTileRepository
 import game.nd.events.GameLogEvent
 import game.nd.extentions.*
+import game.nd.util.Direction4
 import game.nd.view.fragments.PlayerStats
 import game.nd.world.WorldImpl
 import org.hexworks.cobalt.datatypes.extensions.map
@@ -218,6 +216,13 @@ class PlayView : BaseView() {
                 }
             }
         }
+
+        gameArea.withBlockAt(Positions.create3DPosition(15,30,0)) {
+            it.withTopNonPlayerEntity {
+                PassingDescription(Direction4.LEFT to "You enter a capsule hotel")
+            }
+        }
+
     }
 
     private fun loadRexGameAreaRails(gameArea: WorldImpl) {

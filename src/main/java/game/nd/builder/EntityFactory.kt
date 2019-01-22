@@ -4,6 +4,7 @@ import game.nd.attribute.*
 import game.nd.attribute.type.*
 import game.nd.extentions.newGameEntityOfType
 import game.nd.system.*
+import game.nd.util.Direction4
 import org.hexworks.cavesofzircon.attributes.flags.VisionBlocker
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.data.Tile
@@ -24,7 +25,7 @@ object EntityFactory {
                 CryptosCounter(),
                 Inventory(10))
         behaviors(PlayerInputHandler)
-        facets(Movable, CameraMover, BlockInspector, LevelChanger, Stealing, Opener, ItemDropper)
+        facets(Movable, CameraMover, BlockInspector, LevelChanger, Stealing, Opener, ItemDropper, ItemPicker)
     }
 
     fun newCitizen(position: Position3D = Position3D.unknown()) = newGameEntityOfType(Citizen) {
@@ -100,6 +101,11 @@ object EntityFactory {
                 BlockOccupier,
                 Openable(locked))
     }
+    fun newDoorOpened(tile: Tile) = newGameEntityOfType(Door) {
+        attributes(EntityTile(tile),
+                PassingDescription(Direction4.LEFT to "You enter a capsule hotel", Direction4.RIGHT to "You leave the capsule hotel"),
+                EntityPosition())
+    }
 
     fun newBed(tile: Tile) = newGameEntityOfType(Bed) {
         attributes(EntityTile(tile),
@@ -117,8 +123,8 @@ object EntityFactory {
 
     fun newJacket() = newGameEntityOfType(Jacket) {
         attributes(ItemCombatStats(combatItemType = "Armor"),
-                EntityTile(),
                 EntityPosition(),
+                EntityTile(GameTileRepository.jacket()),
                 ItemIcon(Tiles.newBuilder()
                         .withName("Leather jacket")
                         .withTileset(BuiltInGraphicTilesetResource.NETHACK_16X16)

@@ -80,6 +80,9 @@ object GameTileRepository {
             arrayListOf(GameTileRepository.CAR_WINDOW, GameTileRepository.CAR_WINDOW, GameTileRepository.CAR_WINDOW),
             arrayListOf(GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN, GameTileRepository.CAR_TIN))
 
+    fun jacket() = DEFAULT
+            .withCharacter('j')
+            .withForegroundColor(ANSITileColor.WHITE)
 
     fun dagger() = DEFAULT
             .withCharacter('(')
